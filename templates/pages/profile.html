@@ -1,5 +1,9 @@
 {% extends "base.html" %}
-{% block extra_css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/profile.css') }}"><link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/profile.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/onboarding.css') }}">
+{% endblock %}
 {% block content %}
 <div class="dashboard-layout">
   {% include 'partials/sidebar.html' %}
@@ -7,7 +11,11 @@
     <div class="profile-header">
       <div class="avatar avatar-lg" id="profile-avatar">AM</div>
       <div class="profile-info">
-        <h1 id="profile-name">Alex Morgan</h1>
+        <div style="display:flex;align-items:center;gap:0.75rem;flex-wrap:wrap;">
+          <h1 id="profile-name">Alex Morgan</h1>
+          <span class="badge" id="profile-verify-badge"></span>
+          <span class="badge" id="profile-role-badge"></span>
+        </div>
         <p class="text-muted" id="profile-title"></p>
         <p class="mt-1" id="profile-badges"></p>
         <div class="profile-actions">
@@ -18,6 +26,16 @@
       </div>
       <div class="completeness-ring" id="profile-completeness" style="--pct:78%" data-pct="78%"></div>
     </div>
+
+    <!-- Completeness Progress Bar -->
+    <div class="profile-completeness-bar glass-card" id="profileCompletenessBar">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;">
+        <span class="text-sm" style="font-weight:600;">Profile Completeness</span>
+        <span class="text-sm" id="profilePctText" style="color:var(--primary-light);font-weight:700;">78%</span>
+      </div>
+      <div class="progress-bar"><span id="profileProgressFill" style="width:78%"></span></div>
+    </div>
+
     <h2 class="mt-3">Bio</h2>
     <p class="text-muted glass-card" id="profile-bio"></p>
     <div class="grid grid-2 mt-3">
@@ -39,24 +57,56 @@
 document.addEventListener("DOMContentLoaded", () => {
   const state = TalentStageStore.get();
   const user = state.currentUser;
-  document.getElementById("profile-avatar").textContent = user.name.split(" ").map(part => part[0]).join("").slice(0, 2);
+
+  document.getElementById("profile-avatar").textContent = user.name.split(" ").map(p => p[0]).join("").slice(0, 2);
   document.getElementById("profile-name").textContent = user.name;
   document.getElementById("profile-title").textContent = `${user.title} · ${TalentStageStore.money(user.hourlyRate)}/hr · ${user.availability}`;
-  document.getElementById("profile-badges").innerHTML = user.badges.map(badge => `<span class="badge badge-verified">${badge}</span>`).join(" ") + ` <span class="badge">${user.availability}</span>`;
-  document.getElementById("profile-completeness").style.setProperty("--pct", `${user.completeness}%`);
-  document.getElementById("profile-completeness").dataset.pct = `${user.completeness}%`;
+  document.getElementById("profile-badges").innerHTML = (user.badges || []).map(b => `<span class="badge badge-verified">${b}</span>`).join(" ") + ` <span class="badge">${user.availability}</span>`;
+
+  // Role badge
+  const roleBadge = document.getElementById('profile-role-badge');
+  const roleLabels = { freelancer: '💼 Freelancer', client: '🏢 Client', both: '🚀 Both' };
+  const role = user.role || localStorage.getItem('talentstage_role') || 'freelancer';
+  roleBadge.innerHTML = roleLabels[role] || '💼 Freelancer';
+  roleBadge.className = 'badge badge-ai';
+
+  // Verify badge
+  const verifyBadge = document.getElementById('profile-verify-badge');
+  const vs = user.verifyStatus || 'none';
+  if (vs === 'verified') {
+    verifyBadge.innerHTML = '✅ Verified';
+    verifyBadge.className = 'badge verify-badge-verified';
+  } else if (vs === 'pending') {
+    verifyBadge.innerHTML = '⏳ Pending';
+    verifyBadge.className = 'badge verify-badge-pending';
+  } else {
+    verifyBadge.innerHTML = '🔓 Not Verified';
+    verifyBadge.className = 'badge';
+  }
+
+  // Completeness
+  const pct = TalentStageStore.computeCompleteness ? TalentStageStore.computeCompleteness() : (user.completeness || 0);
+  document.getElementById("profile-completeness").style.setProperty("--pct", `${pct}%`);
+  document.getElementById("profile-completeness").dataset.pct = `${pct}%`;
+  document.getElementById("profilePctText").textContent = `${pct}%`;
+  document.getElementById("profileProgressFill").style.width = `${pct}%`;
+
   document.getElementById("profile-bio").textContent = user.bio;
-  document.getElementById("profile-skills").innerHTML = user.skills.map(skill => `<span class="tag">${skill}</span>`).join("");
+  document.getElementById("profile-skills").innerHTML = user.skills.map(s => `<span class="tag">${s}</span>`).join("");
   document.getElementById("profile-rate").textContent = `${TalentStageStore.money(user.hourlyRate)} hourly · ${user.availability}`;
   document.getElementById("profile-education").textContent = user.education;
   document.getElementById("profile-experience").innerHTML = user.experience.split("\\n").map(item => `<div class="timeline-item">${item}</div>`).join("");
   document.getElementById("portfolio-grid").innerHTML = state.portfolio.map(project => `
-    <div class="glass-card portfolio-item">
-      <div class="thumb">${project.category.slice(0, 2).toUpperCase()}</div>
-      <h3>${project.title}</h3>
-      <p class="text-muted">${project.desc}</p>
-      <p>${project.tools.map(tool => `<span class="tag">${tool}</span>`).join("")}</p>
-      ${project.link ? `<a class="btn btn-sm btn-secondary mt-2" href="${project.link}" target="_blank" rel="noreferrer">Open Project</a>` : ""}
+    <div class="portfolio-item">
+      <div class="thumb" style="background-image: url('${project.image || ''}'); background-size: cover; background-position: center;">
+        ${!project.image ? project.category.slice(0, 2).toUpperCase() : ''}
+      </div>
+      <div style="padding: 1.5rem; flex: 1; display: flex; flex-direction: column;">
+        <h3 style="margin-bottom: 0.5rem; font-family: var(--font-heading);">${project.title}</h3>
+        <p class="text-muted text-sm" style="flex: 1; margin-bottom: 1rem;">${project.desc}</p>
+        <div style="margin-bottom: 1rem;">${project.tools.map(tool => `<span class="tag">${tool}</span>`).join("")}</div>
+        ${project.link ? `<a class="btn btn-sm btn-secondary" style="width: 100%; text-align: center;" href="${project.link}" target="_blank" rel="noreferrer">View Live Project</a>` : `<button class="btn btn-sm btn-ghost" style="width: 100%; text-align: center;" disabled>Private/Offline</button>`}
+      </div>
     </div>`).join("");
 });
 </script>

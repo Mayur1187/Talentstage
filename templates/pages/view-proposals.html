@@ -20,12 +20,15 @@
 <script>
 document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("proposal-cards").innerHTML = MOCK_DATA.proposals.map(p => `
-    <div class="glass-card proposal-card mb-2 ${p.recommended ? 'recommended' : ''}">
+      <div class="glass-card proposal-card mb-2 ${p.recommended ? 'recommended' : ''}">
       <h4>${p.freelancer}</h4>
       <p>Bid: $${p.bid} · ${p.timeline}</p>
       <p class="text-sm text-muted mt-1">${p.message}</p>
-      <button class="btn btn-sm btn-primary mt-2" onclick="showToast('Freelancer hired!')">Hire</button>
-      <button class="btn btn-sm btn-ghost mt-2">Message</button>
+      <div class="mt-2" style="display: flex; gap: 0.5rem; align-items: center;">
+        <button class="btn btn-sm btn-primary" onclick="showToast('Freelancer hired!')">Hire</button>
+        <button class="btn btn-sm btn-secondary" onclick="event.target.textContent='Shortlisted'; event.target.classList.add('btn-ghost'); event.target.classList.remove('btn-secondary'); showToast('Added to shortlist')">Shortlist</button>
+        <button class="btn btn-sm btn-ghost">Message</button>
+      </div>
     </div>`).join("");
   runAI("evaluate", { projectId: {{ project_id }} });
 });

@@ -18,10 +18,36 @@
         <h3>Pro</h3>
         <p class="price">$19<span class="text-sm">/mo</span></p>
         <ul><li>Featured profile</li><li>Priority AI matching</li><li>Unlimited proposals</li><li>Advanced analytics</li></ul>
-        <button class="btn btn-primary" onclick="showToast('Checkout complete (sandbox)')">Upgrade — Sandbox</button>
+        <button class="btn btn-primary" id="btn-upgrade" onclick="upgradeToPro()">Upgrade — Sandbox</button>
       </div>
     </div>
   </main>
 </div>
 {% endblock %}
-{% block extra_js %}<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>{% endblock %}
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+<script>
+function upgradeToPro() {
+  const state = TalentStageStore.get();
+  state.currentUser.isPro = true;
+  TalentStageStore.save(state);
+  
+  showToast('Checkout complete (sandbox)! You are now a Pro Freelancer.');
+  renderSubscription();
+}
+
+function renderSubscription() {
+  const state = TalentStageStore.get();
+  const btn = document.getElementById("btn-upgrade");
+  if (state.currentUser.isPro) {
+    btn.textContent = "Current Plan";
+    btn.disabled = true;
+    btn.classList.replace("btn-primary", "btn-ghost");
+  }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  renderSubscription();
+});
+</script>
+{% endblock %}

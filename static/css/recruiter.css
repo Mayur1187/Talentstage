@@ -1,19 +1,39 @@
-.project-card .budget { color: var(--success); font-weight: 600; }
-.project-card .deadline { font-size: 0.85rem; color: var(--text-muted); }
+/* recruiter.css / project & proposals cards */
+.project-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+.project-card h3 { font-family: var(--font-heading); margin-bottom: 0.25rem; }
+.project-card .budget { color: var(--success); font-weight: 700; font-size: 1.1rem; margin: 0.5rem 0; }
+.project-card .deadline { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem; flex: 1; }
 
-.proposal-card { position: relative; }
+.proposal-card { position: relative; overflow: hidden; }
+.proposal-card.recommended {
+  border-color: var(--accent-pink);
+  box-shadow: 0 0 15px rgba(255, 77, 157, 0.2);
+}
 .proposal-card.recommended::before {
-  content: 'AI Recommended';
+  content: '✨ AI Recommended';
   position: absolute;
   top: 1rem;
   right: 1rem;
+  background: linear-gradient(135deg, var(--accent-pink), #D946EF);
+  color: white;
+  padding: 0.25rem 0.75rem;
+  border-radius: 99px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  box-shadow: 0 4px 10px rgba(255, 77, 157, 0.4);
 }
 
 .inbox-badge {
-  background: var(--accent-pink);
+  background: linear-gradient(135deg, var(--accent-pink), #D946EF);
   color: white;
   font-size: 0.7rem;
+  font-weight: 700;
   padding: 0.15rem 0.5rem;
   border-radius: 99px;
   margin-left: 0.5rem;
+  box-shadow: 0 0 8px rgba(255, 77, 157, 0.4);
 }

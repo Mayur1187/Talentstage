@@ -1,22 +1,47 @@
 {% extends "base.html" %}
-{% block extra_css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/onboarding.css') }}">
+{% endblock %}
 {% block content %}
 <div class="dashboard-layout">
   {% include 'partials/sidebar.html' %}
   <main class="dashboard-main">
-    <h1>Edit Profile</h1>
-    <p class="text-muted">Update the freelancer profile clients see before they invite you to work.</p>
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:1rem;">
+      <div>
+        <h1>Edit Profile</h1>
+        <p class="text-muted">Update the freelancer profile clients see before they invite you to work.</p>
+      </div>
+      <div class="live-completeness glass-card" id="liveCompleteness">
+        <div class="completeness-ring" id="editCompleteness" style="--pct:0%" data-pct="0%"></div>
+        <span class="text-sm" style="font-weight:600;" id="editPctLabel">0% Complete</span>
+      </div>
+    </div>
     <form id="profile-form" class="glass-card mt-2" style="max-width:720px">
-      <div class="form-group"><label>Name</label><input name="name" required></div>
-      <div class="form-group"><label>Title</label><input name="title" required></div>
-      <div class="form-group"><label>Bio</label><textarea name="bio" rows="4" required></textarea></div>
-      <div class="form-group"><label>Hourly rate ($)</label><input name="hourlyRate" type="number" min="1" required></div>
-      <div class="form-group"><label>Availability</label><select name="availability"><option>Available</option><option>Busy</option><option>Limited</option></select></div>
-      <div class="form-group"><label>Skills (comma separated)</label><input name="skills" required></div>
-      <div class="form-group"><label>Education</label><input name="education" required></div>
-      <div class="form-group"><label>Work experience</label><textarea name="experience" rows="4" required></textarea></div>
-      <button class="btn btn-primary">Save Changes</button>
-      <a href="/profile" class="btn btn-ghost">View Profile</a>
+      <div class="form-group field-status" id="fg-name"><label>Name <span class="field-indicator"></span></label><input name="name" required></div>
+      <div class="form-group field-status" id="fg-title"><label>Title <span class="field-indicator"></span></label><input name="title" required></div>
+      <div class="form-group field-status" id="fg-bio"><label>Bio <span class="field-indicator"></span></label><textarea name="bio" rows="4" required></textarea></div>
+      <div class="form-group field-status" id="fg-hourlyRate"><label>Hourly rate ($) <span class="field-indicator"></span></label><input name="hourlyRate" type="number" min="1" required></div>
+      <div class="form-group field-status" id="fg-availability"><label>Availability <span class="field-indicator"></span></label><select name="availability"><option>Available</option><option>Busy</option><option>Limited</option></select></div>
+      <div class="form-group field-status" id="fg-skills"><label>Skills (comma separated) <span class="field-indicator"></span></label><input name="skills" required></div>
+      <div class="form-group field-status" id="fg-education"><label>Education <span class="field-indicator"></span></label><input name="education" required></div>
+      <div class="form-group field-status" id="fg-experience"><label>Work experience <span class="field-indicator"></span></label><textarea name="experience" rows="4" required></textarea></div>
+
+      <!-- Verification Status Section -->
+      <div class="verify-section glass-card" id="editVerifySection" style="margin-top:1.5rem;padding:1.25rem;">
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <div>
+            <h3 style="font-size:1rem;margin-bottom:0.25rem;">🔒 Identity Verification</h3>
+            <p class="text-sm text-muted" id="editVerifyText">Not yet verified</p>
+          </div>
+          <a href="/verify" class="btn btn-sm btn-secondary" id="editVerifyBtn">Verify Now</a>
+        </div>
+      </div>
+
+      <div style="margin-top:1.5rem;display:flex;gap:0.75rem;flex-wrap:wrap;">
+        <button class="btn btn-primary">Save Changes</button>
+        <a href="/profile" class="btn btn-ghost">View Profile</a>
+      </div>
     </form>
   </main>
 </div>
@@ -28,6 +53,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const state = TalentStageStore.get();
   const form = document.getElementById("profile-form");
   const user = state.currentUser;
+
   form.name.value = user.name;
   form.title.value = user.title;
   form.bio.value = user.bio;
@@ -36,6 +62,72 @@ document.addEventListener("DOMContentLoaded", () => {
   form.skills.value = user.skills.join(", ");
   form.education.value = user.education;
   form.experience.value = user.experience;
+
+  // Verify status
+  const vs = user.verifyStatus || 'none';
+  const verifyText = document.getElementById('editVerifyText');
+  const verifyBtn = document.getElementById('editVerifyBtn');
+  if (vs === 'verified') {
+    verifyText.textContent = '✅ Identity verified';
+    verifyBtn.textContent = 'Verified';
+    verifyBtn.classList.add('btn-ghost');
+    verifyBtn.style.pointerEvents = 'none';
+  } else if (vs === 'pending') {
+    verifyText.textContent = '⏳ Verification pending review';
+    verifyBtn.textContent = 'Pending...';
+    verifyBtn.style.pointerEvents = 'none';
+  }
+
+  // Live completeness scoring
+  function updateLiveCompleteness() {
+    const checks = {
+      name: !!form.name.value.trim(),
+      title: !!form.title.value.trim(),
+      bio: form.bio.value.trim().length >= 20,
+      hourlyRate: Number(form.hourlyRate.value) > 0,
+      skills: TalentStageStore.splitCSV(form.skills.value).length >= 3,
+      education: !!form.education.value.trim(),
+      experience: !!form.experience.value.trim(),
+    };
+
+    // Portfolio & verify from state (not in form)
+    const hasPortfolio = state.portfolio.length > 0;
+    const isVerified = (user.verifyStatus === 'verified' || user.verifyStatus === 'pending');
+
+    const weights = { name: 10, title: 10, bio: 15, hourlyRate: 5, skills: 15, education: 5, experience: 10, portfolio: 15, verify: 15 };
+    let score = 0;
+    Object.keys(checks).forEach(k => { if (checks[k]) score += weights[k]; });
+    if (hasPortfolio) score += weights.portfolio;
+    if (isVerified) score += weights.verify;
+    score = Math.min(100, score);
+
+    // Update ring
+    const ring = document.getElementById('editCompleteness');
+    ring.style.setProperty('--pct', score + '%');
+    ring.dataset.pct = score + '%';
+    document.getElementById('editPctLabel').textContent = score + '% Complete';
+
+    // Update field indicators
+    Object.keys(checks).forEach(k => {
+      const fg = document.getElementById('fg-' + k);
+      if (fg) {
+        const indicator = fg.querySelector('.field-indicator');
+        if (indicator) {
+          indicator.textContent = checks[k] ? '✓' : '○';
+          indicator.style.color = checks[k] ? 'var(--success)' : 'var(--warning)';
+        }
+      }
+    });
+  }
+
+  // Listen to all inputs
+  form.querySelectorAll('input, textarea, select').forEach(el => {
+    el.addEventListener('input', updateLiveCompleteness);
+    el.addEventListener('change', updateLiveCompleteness);
+  });
+
+  updateLiveCompleteness();
+
   form.addEventListener("submit", event => {
     event.preventDefault();
     state.currentUser = {
@@ -48,10 +140,10 @@ document.addEventListener("DOMContentLoaded", () => {
       skills: TalentStageStore.splitCSV(form.skills.value),
       education: form.education.value.trim(),
       experience: form.experience.value.trim(),
-      completeness: 94,
     };
     TalentStageStore.save(state);
     showToast("Profile saved");
+    updateLiveCompleteness();
   });
 });
 </script>

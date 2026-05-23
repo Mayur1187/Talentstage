@@ -8,7 +8,7 @@
     <p class="text-muted">Get actionable suggestions to improve your showcase.</p>
     <div class="ai-panel" data-ai-panel="portfolio-review">
       <div class="ai-panel-header"><div class="ai-icon">✦</div><div><h3>Portfolio Analysis</h3><p class="text-sm text-muted">Powered by TalentStage AI</p></div></div>
-      <button class="btn btn-primary" onclick="runAI('portfolio-review', {})">Analyze My Portfolio</button>
+      <button class="btn btn-primary" onclick="runAI('portfolio-review', {portfolio: TalentStageStore.get().portfolio})">Analyze My Portfolio</button>
       <div class="ai-loading hidden"><div class="loader"></div><span>Reviewing projects...</span></div>
       <div class="ai-result hidden mt-2"></div>
     </div>

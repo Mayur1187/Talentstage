@@ -12,7 +12,7 @@
       <div id="profile-skills" class="mt-1"></div>
       <div class="profile-actions">
         <a href="/messages" class="btn btn-primary">Message</a>
-        <button class="btn btn-secondary" onclick="showToast('Freelancer saved')">Save</button>
+        <button class="btn btn-secondary" onclick="saveFreelancerToStore({{ talent_id }})">Save</button>
         <a href="/client/post-project" class="btn btn-ghost">Hire</a>
       </div>
     </div>
@@ -28,6 +28,20 @@
 <script src="{{ url_for('static', filename='js/profile.js') }}"></script>
 <script>
 document.body.dataset.talentId = "{{ talent_id }}";
+
+function saveFreelancerToStore(talentId) {
+  const state = TalentStageStore.get();
+  if (!state.savedFreelancers) state.savedFreelancers = [];
+  
+  if (!state.savedFreelancers.includes(talentId)) {
+    state.savedFreelancers.push(talentId);
+    TalentStageStore.save(state);
+    showToast('Freelancer saved');
+  } else {
+    showToast('Freelancer already saved');
+  }
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   const el = document.getElementById("reviews-list");
   if (el) el.innerHTML = MOCK_DATA.reviews.map(r => `

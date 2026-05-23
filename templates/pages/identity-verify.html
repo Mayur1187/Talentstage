@@ -2,33 +2,76 @@
 {% block extra_css %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/onboarding.css') }}">
 {% endblock %}
 {% block content %}
-<div class="dashboard-layout">
+<div class="dashboard-layout" id="verifyPage">
   {% include 'partials/sidebar.html' %}
-  <main class="dashboard-main container">
-    <div class="page-header"><h1>Identity Verification</h1><p class="text-muted">Build trust with clients and freelancers</p></div>
-    <div class="stepper">
-      <div class="step active">1. Method</div>
-      <div class="step">2. Upload</div>
-      <div class="step">3. Review</div>
-    </div>
-    <div class="glass-card">
-      <div data-tabs>
-        <div class="tabs">
-          <button class="tab active" type="button">Student ID</button>
-          <button class="tab" type="button">LinkedIn URL</button>
-        </div>
-        <div class="tab-panel active">
-          <div class="dropzone" id="id-dropzone">Drop your student ID image here or click to browse</div>
-        </div>
-        <div class="tab-panel">
-          <div class="form-group"><label>LinkedIn profile URL</label><input type="url" placeholder="https://linkedin.com/in/yourprofile"></div>
-        </div>
+  <main class="dashboard-main">
+    <div class="verify-container">
+      <div class="page-header">
+        <h1>Identity Verification</h1>
+        <p class="text-muted">Build trust with clients and freelancers — verified profiles get 3x more views</p>
       </div>
-      <button class="btn btn-primary mt-2" onclick="showToast('Verification submitted for review (demo)')">Submit for Review</button>
+
+      <!-- Stepper -->
+      <div class="stepper">
+        <div class="step active">1. Choose Method</div>
+        <div class="step">2. Upload / Link</div>
+        <div class="step">3. Review</div>
+      </div>
+
+      <!-- Method Selection -->
+      <div class="glass-card">
+        <div class="verify-method-tabs">
+          <button class="verify-tab active" data-verify-tab="0">
+            <span class="verify-tab-icon">📄</span>
+            <span class="verify-tab-label">Student ID</span>
+          </button>
+          <button class="verify-tab" data-verify-tab="1">
+            <span class="verify-tab-icon">🔗</span>
+            <span class="verify-tab-label">LinkedIn Profile</span>
+          </button>
+        </div>
+
+        <!-- Student ID Panel -->
+        <div class="verify-panel active">
+          <div class="dropzone-enhanced" id="verifyDropzone">
+            <span class="dropzone-icon">📤</span>
+            <div class="dropzone-text">Drag & drop your Student ID or <strong>click to browse</strong></div>
+            <div class="dropzone-hint">Supported: JPG, PNG, PDF · Max 5MB</div>
+            <input type="file" id="verifyFileInput" accept="image/*,.pdf" hidden>
+          </div>
+          <div id="filePreviewArea"></div>
+          <div class="upload-progress" id="uploadProgress">
+            <div class="upload-progress-bar"></div>
+          </div>
+        </div>
+
+        <!-- LinkedIn Panel -->
+        <div class="verify-panel">
+          <div class="form-group">
+            <label>LinkedIn Profile URL</label>
+            <div class="linkedin-input-wrap">
+              <input type="url" id="verifyLinkedin" placeholder="https://linkedin.com/in/yourprofile">
+              <span class="linkedin-status" id="linkedinStatus"></span>
+            </div>
+            <p class="text-xs text-muted mt-1">We'll verify your profile matches your TalentStage account</p>
+          </div>
+        </div>
+
+        <button class="btn btn-primary mt-2" id="verifySubmitBtn" style="width:100%;">Submit for Verification</button>
+      </div>
+
+      <!-- Status Area (populated by JS after submission) -->
+      <div id="verifyStatusArea"></div>
+
+      <a href="/dashboard" class="skip-link">Skip for now → I'll verify later</a>
     </div>
   </main>
 </div>
 {% endblock %}
-{% block extra_js %}<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>{% endblock %}
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+<script src="{{ url_for('static', filename='js/onboarding.js') }}"></script>
+{% endblock %}

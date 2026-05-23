@@ -13,12 +13,35 @@
 {% block extra_js %}
 <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
 <script>
-document.addEventListener("DOMContentLoaded", () => {
-  document.getElementById("saved-list").innerHTML = MOCK_DATA.freelancers.slice(0, 4).map(t => `
+function removeSaved(id) {
+  const state = TalentStageStore.get();
+  if (state.savedFreelancers) {
+    state.savedFreelancers = state.savedFreelancers.filter(fid => fid !== id);
+    TalentStageStore.save(state);
+    showToast('Removed from saved');
+    renderSaved();
+  }
+}
+
+function renderSaved() {
+  const state = TalentStageStore.get();
+  const savedIds = state.savedFreelancers || [];
+  const savedData = savedIds.map(id => getFreelancer(id)).filter(Boolean);
+  
+  if (savedData.length === 0) {
+    document.getElementById("saved-list").innerHTML = "<p class='text-muted'>You haven't saved any freelancers yet.</p>";
+    return;
+  }
+  
+  document.getElementById("saved-list").innerHTML = savedData.map(t => `
     <a href="/talent/${t.id}" class="glass-card talent-card">
       <div class="card-header"><div class="avatar">${t.avatar}</div><div><h4>${t.name}</h4><p class="text-sm text-muted">${t.title}</p></div></div>
-      <button class="btn btn-sm btn-ghost mt-2" onclick="event.preventDefault();showToast('Removed from saved')">Remove</button>
+      <button class="btn btn-sm btn-ghost mt-2" onclick="event.preventDefault();removeSaved(${t.id})">Remove</button>
     </a>`).join("");
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  renderSaved();
 });
 </script>
 {% endblock %}

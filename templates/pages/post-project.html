@@ -13,16 +13,47 @@
       <div class="ai-loading hidden"><div class="loader"></div></div>
       <div class="ai-result hidden mt-2" data-ai-panel="scope"></div>
     </div>
-    <form id="project-form" class="glass-card mt-3" style="max-width:640px" onsubmit="event.preventDefault();showToast('Project posted!');location.href='/client/dashboard'">
+    <form id="project-form" class="glass-card mt-3" style="max-width:640px">
       <div class="form-group"><label>Title</label><input name="title" required></div>
       <div class="form-group"><label>Description</label><textarea name="description" required></textarea></div>
-      <div class="form-group"><label>Required skills</label><input placeholder="Figma, React"></div>
-      <div class="form-group"><label>Budget range ($)</label><input placeholder="2500 - 4500"></div>
-      <div class="form-group"><label>Deadline</label><input type="date"></div>
-      <div class="form-group"><label>Project type</label><select><option>Fixed</option><option>Hourly</option></select></div>
+      <div class="form-group"><label>Required skills</label><input name="skills" placeholder="Figma, React" required></div>
+      <div class="form-group"><label>Budget min ($)</label><input type="number" name="budgetMin" placeholder="2500" required></div>
+      <div class="form-group"><label>Budget max ($)</label><input type="number" name="budgetMax" placeholder="4500" required></div>
+      <div class="form-group"><label>Deadline</label><input name="deadline" type="date" required></div>
+      <div class="form-group"><label>Project type</label><select name="type"><option>Fixed</option><option>Hourly</option></select></div>
       <button class="btn btn-primary">Publish Project</button>
     </form>
   </main>
 </div>
 {% endblock %}
-{% block extra_js %}<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script><script src="{{ url_for('static', filename='js/recruiter.js') }}"></script>{% endblock %}
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+<script src="{{ url_for('static', filename='js/recruiter.js') }}"></script>
+<script>
+document.getElementById("project-form").addEventListener("submit", event => {
+  event.preventDefault();
+  const form = event.currentTarget;
+  const state = TalentStageStore.get();
+  
+  const newProject = {
+    id: state.projects.length ? Math.max(...state.projects.map(p => p.id)) + 1 : 1,
+    title: form.title.value.trim(),
+    description: form.description.value.trim(),
+    client: state.currentUser.name,
+    skills: TalentStageStore.splitCSV(form.skills.value),
+    budgetMin: Number(form.budgetMin.value),
+    budgetMax: Number(form.budgetMax.value),
+    deadline: form.deadline.value,
+    type: form.type.value,
+    status: "Open",
+    proposals: 0
+  };
+  
+  state.projects.unshift(newProject);
+  TalentStageStore.save(state);
+  
+  showToast('Project posted!');
+  setTimeout(() => location.href='/client/dashboard', 1000);
+});
+</script>
+{% endblock %}

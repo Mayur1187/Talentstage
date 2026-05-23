@@ -8,7 +8,7 @@ function buildInitialTalentStageState() {
   return {
     currentUser: {
       name: "Alex Morgan",
-      role: "both",
+      role: localStorage.getItem('talentstage_role') || "both",
       email: "alex@example.com",
       title: "Full-Stack Creator",
       bio: "Building beautiful products at the intersection of design and code. 5+ years shipping SaaS and marketplace experiences.",
@@ -19,6 +19,8 @@ function buildInitialTalentStageState() {
       experience: "Senior Developer at TechFlow (2022-2025)\nUI Engineer at Creative Labs (2019-2022)",
       completeness: 78,
       badges: ["Verified React Developer"],
+      verifyStatus: "none",
+      verifyMethod: null,
     },
     portfolio: [
       { id: 1, title: "FinTech Dashboard", desc: "Redesigned analytics dashboard - 34% faster task completion.", tools: ["Figma", "React"], category: "Design", link: "https://example.com/fintech", image: "" },
@@ -34,6 +36,11 @@ function buildInitialTalentStageState() {
     withdrawals: cloneTalentStageData(MOCK_DATA.withdrawals || []),
     reviews: cloneTalentStageData(MOCK_DATA.reviews || []),
     projects: cloneTalentStageData(MOCK_DATA.projects || []),
+    savedFreelancers: [],
+    milestones: cloneTalentStageData(MOCK_DATA.milestones || []),
+    feed: cloneTalentStageData(MOCK_DATA.feed || []),
+    challenges: cloneTalentStageData(MOCK_DATA.challenges || []),
+    mentors: cloneTalentStageData(MOCK_DATA.mentors || []),
   };
 }
 
@@ -52,6 +59,51 @@ function saveTalentStageState(state) {
   return state;
 }
 
+/* Compute profile completeness percentage */
+function computeProfileCompleteness() {
+  const state = getTalentStageState();
+  const user = state.currentUser;
+  const weights = {
+    name: 10,
+    title: 10,
+    bio: 15,
+    skills: 15,
+    hourlyRate: 5,
+    education: 5,
+    experience: 10,
+    portfolio: 15,
+    verify: 15,
+  };
+  let score = 0;
+  if (user.name && user.name.trim()) score += weights.name;
+  if (user.title && user.title.trim()) score += weights.title;
+  if (user.bio && user.bio.trim().length >= 20) score += weights.bio;
+  if (user.skills && user.skills.length >= 3) score += weights.skills;
+  if (user.hourlyRate && Number(user.hourlyRate) > 0) score += weights.hourlyRate;
+  if (user.education && user.education.trim()) score += weights.education;
+  if (user.experience && user.experience.trim()) score += weights.experience;
+  if (state.portfolio && state.portfolio.length > 0) score += weights.portfolio;
+  if (user.verifyStatus === 'verified' || user.verifyStatus === 'pending') score += weights.verify;
+  return Math.min(100, score);
+}
+
+/* Get list of incomplete profile nudges */
+function getProfileNudges() {
+  const state = getTalentStageState();
+  const user = state.currentUser;
+  const nudges = [];
+  if (!user.name || !user.name.trim()) nudges.push({ icon: '👤', label: 'Add your display name', link: '/profile/edit' });
+  if (!user.title || !user.title.trim()) nudges.push({ icon: '💼', label: 'Add a professional title', link: '/profile/edit' });
+  if (!user.bio || user.bio.trim().length < 20) nudges.push({ icon: '✍️', label: 'Write a compelling bio (20+ chars)', link: '/profile/edit' });
+  if (!user.skills || user.skills.length < 3) nudges.push({ icon: '🏷️', label: 'Add at least 3 skills', link: '/profile/edit' });
+  if (!user.hourlyRate || Number(user.hourlyRate) <= 0) nudges.push({ icon: '💰', label: 'Set your hourly rate', link: '/profile/edit' });
+  if (!user.education || !user.education.trim()) nudges.push({ icon: '🎓', label: 'Add your education', link: '/profile/edit' });
+  if (!user.experience || !user.experience.trim()) nudges.push({ icon: '📋', label: 'Add work experience', link: '/profile/edit' });
+  if (!state.portfolio || state.portfolio.length === 0) nudges.push({ icon: '📂', label: 'Upload a portfolio project', link: '/upload' });
+  if (user.verifyStatus !== 'verified' && user.verifyStatus !== 'pending') nudges.push({ icon: '🔒', label: 'Verify your identity', link: '/verify' });
+  return nudges;
+}
+
 window.TalentStageStore = {
   get: getTalentStageState,
   save: saveTalentStageState,
@@ -68,4 +120,6 @@ window.TalentStageStore = {
   splitCSV(value) {
     return String(value || "").split(",").map((item) => item.trim()).filter(Boolean);
   },
+  computeCompleteness: computeProfileCompleteness,
+  getNudges: getProfileNudges,
 };

@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% block extra_css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}"><link rel="stylesheet" href="{{ url_for('static', filename='css/contracts.css') }}">{% endblock %}
+{% block content %}
+<div class="dashboard-layout">
+  {% include 'partials/sidebar.html' %}
+  <main class="dashboard-main">
+    <h1>Active Projects</h1>
+    <p class="text-muted">Track deliverables, request revisions, and release milestone payments.</p>
+    <div id="contracts-list" class="mt-2"></div>
+  </main>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+<script>
+function renderContracts() {
+  const state = TalentStageStore.get();
+  // Filter for contracts where client matches currentUser name, or just show all for demo
+  const clientContracts = state.contracts; // For now show all, or filter: state.contracts.filter(c => c.client === state.currentUser.name)
+  
+  document.getElementById("contracts-list").innerHTML = clientContracts.map(c => `
+    <div class="glass-card mb-3">
+      <div class="flex-between">
+        <h3>${c.title}</h3>
+        <div>
+          <span class="badge ${c.status === 'Review' ? 'pending' : ''}">${c.status}</span>
+          <a href="/client/milestones/${c.id}" class="btn btn-sm btn-ghost" style="margin-left: 10px;">Milestones</a>
+        </div>
+      </div>
+      <p class="text-sm text-muted">Freelancer: ${c.freelancer} · ${TalentStageStore.money(c.value)} · Due ${c.dueDate}</p>
+      <div class="progress-bar mt-2"><span style="width:${c.progress}%"></span></div>
+      
+      <ul class="deliverable-list mt-2">
+        ${c.deliverables.map(d => `<li><input type="checkbox" disabled ${d.done ? "checked" : ""}> ${d.name}</li>`).join("")}
+      </ul>
+      
+      <div class="mt-2">
+        <strong>Files Submitted:</strong> 
+        <span class="text-sm text-muted">${c.files && c.files.length ? c.files.join(", ") : "No files yet"}</span>
+      </div>
+      
+      <div class="chat-preview mt-2">
+        ${(c.messages || []).map(message => `
+          <div class="chat-bubble ${message.from === "Client" ? "sent" : "received"}">
+            <strong>${message.from}:</strong> ${message.text}
+          </div>
+        `).join("")}
+      </div>
+
+      <form class="contract-form mt-2" data-contract="${c.id}">
+        <div class="form-group">
+          <label>Message Freelancer</label>
+          <textarea name="message" rows="2" placeholder="Great work so far. Could you tweak the header?"></textarea>
+        </div>
+        <div class="flex-between" style="align-items: center; margin-top: 10px;">
+          <div>
+             <button type="button" class="btn btn-sm btn-secondary" onclick="updateContractStatus(${c.id}, 'Revision Requested')">Request Revision</button>
+             <button type="button" class="btn btn-sm btn-primary" onclick="updateContractStatus(${c.id}, 'Completed'); window.location.href='/client/review/1'">Approve & Complete</button>
+          </div>
+          <button type="submit" class="btn btn-sm btn-ghost">Send Message</button>
+        </div>
+      </form>
+    </div>`).join("");
+
+  document.querySelectorAll(".contract-form").forEach(form => {
+    form.addEventListener("submit", event => {
+      event.preventDefault();
+      const messageText = form.message.value.trim();
+      if (!messageText) return;
+      
+      const next = TalentStageStore.get();
+      const contract = next.contracts.find(item => item.id === Number(form.dataset.contract));
+      contract.messages.push({ from: "Client", text: messageText });
+      
+      TalentStageStore.save(next);
+      renderContracts();
+      showToast("Message sent to freelancer");
+    });
+  });
+}
+
+function updateContractStatus(contractId, newStatus) {
+  const next = TalentStageStore.get();
+  const contract = next.contracts.find(item => item.id === contractId);
+  if (contract) {
+      contract.status = newStatus;
+      TalentStageStore.save(next);
+      renderContracts();
+      showToast(`Contract marked as ${newStatus}`);
+  }
+}
+
+document.addEventListener("DOMContentLoaded", renderContracts);
+</script>
+{% endblock %}

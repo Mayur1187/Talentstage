@@ -2,15 +2,36 @@
 {% block extra_css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/community.css') }}">{% endblock %}
 {% block content %}
 <section class="section container">
-  <h1 class="section-title">Mentorship</h1>
-  <p class="section-subtitle">Book sessions with experienced freelancers — paid or free.</p>
+  <div class="flex-between mb-3">
+    <div>
+        <h1 class="section-title">Mentorship</h1>
+        <p class="section-subtitle">Book sessions with experienced freelancers — paid or free.</p>
+    </div>
+    <button class="btn btn-primary" onclick="document.getElementById('mentor-form-container').classList.toggle('hidden')">Become a Mentor</button>
+  </div>
+  
+  <div id="mentor-form-container" class="glass-card mb-4 hidden" style="max-width: 600px;">
+      <h3>Offer Mentorship</h3>
+      <form id="mentor-form" class="mt-2">
+          <div class="grid grid-2">
+              <div class="form-group"><label>Your Expertise</label><input type="text" name="expertise" placeholder="e.g. Senior Engineering Lead" required></div>
+              <div class="form-group"><label>Session Rate ($)</label><input type="number" name="rate" placeholder="0 for Free" required min="0"></div>
+          </div>
+          <button type="submit" class="btn btn-secondary mt-2">List Profile</button>
+      </form>
+  </div>
+
   <div class="grid grid-3" id="mentors-grid"></div>
 </section>
 {% endblock %}
 {% block extra_js %}
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
 <script>
-document.addEventListener("DOMContentLoaded", () => {
-  document.getElementById("mentors-grid").innerHTML = MOCK_DATA.mentors.map(m => `
+function renderMentors() {
+  const state = TalentStageStore.get();
+  const mentors = state.mentors || [];
+  
+  document.getElementById("mentors-grid").innerHTML = mentors.map(m => `
     <div class="glass-card mentor-card">
       <h3>${m.name}</h3>
       <p class="text-muted text-sm">${m.expertise}</p>
@@ -18,6 +39,33 @@ document.addEventListener("DOMContentLoaded", () => {
       <p class="text-xs text-muted">${m.sessions} sessions completed</p>
       <button class="btn btn-primary btn-sm mt-2" onclick="showToast('Session booked (demo)')">Book Session</button>
     </div>`).join("");
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  renderMentors();
+  
+  document.getElementById("mentor-form").addEventListener("submit", event => {
+      event.preventDefault();
+      const form = event.currentTarget;
+      const state = TalentStageStore.get();
+      const rate = Number(form.rate.value);
+      
+      if (!state.mentors) state.mentors = [];
+      
+      state.mentors.unshift({
+          name: state.currentUser.name,
+          expertise: form.expertise.value.trim(),
+          rate: rate,
+          type: rate === 0 ? "Free" : "Paid",
+          sessions: 0
+      });
+      
+      TalentStageStore.save(state);
+      form.reset();
+      document.getElementById('mentor-form-container').classList.add('hidden');
+      renderMentors();
+      showToast("You are now listed as a mentor!");
+  });
 });
 </script>
 {% endblock %}

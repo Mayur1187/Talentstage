@@ -28,7 +28,7 @@ a:hover { color: var(--accent-pink); }
 
 img { max-width: 100%; display: block; }
 
-h1, h2, h3, h4 { font-weight: 700; line-height: 1.2; }
+h1, h2, h3, h4 { font-family: var(--font-heading); font-weight: 700; line-height: 1.2; }
 
 .page-wrapper { padding-top: var(--navbar-height); min-height: 100vh; }
 

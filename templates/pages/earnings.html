@@ -14,6 +14,8 @@
       </div>
       <button class="btn btn-secondary">Request Withdrawal</button>
     </form>
+    <h2 class="mt-3">Recent Transactions</h2>
+    <div class="glass-card" id="transactions"></div>
     <h2 class="mt-3">Withdrawal History</h2>
     <div class="glass-card" id="withdrawals"></div>
   </main>
@@ -26,10 +28,17 @@ function renderEarnings() {
   const state = TalentStageStore.get();
   const e = state.earnings;
   document.getElementById("earnings-cards").innerHTML = `
-    <div class="glass-card stat-card"><div class="stat-value">${TalentStageStore.money(e.total)}</div><div class="stat-label">Total Earned</div></div>
+    <div class="glass-card stat-card"><div class="stat-value">${TalentStageStore.money(e.total)}</div><div class="stat-label">Total Earned (Net)</div></div>
     <div class="glass-card stat-card"><div class="stat-value">${TalentStageStore.money(e.pending)}</div><div class="stat-label">Pending</div></div>
     <div class="glass-card stat-card"><div class="stat-value">${TalentStageStore.money(e.withdrawn)}</div><div class="stat-label">Withdrawn</div></div>
     <div class="glass-card stat-card"><div class="stat-value">${TalentStageStore.money(e.commission)}</div><div class="stat-label">Commission Paid</div></div>`;
+  
+  const transactionsHtml = (state.transactions && state.transactions.length > 0) 
+    ? '<table style="width:100%"><tr><th>Date</th><th>Description</th><th>Gross</th><th>Fee (10%)</th><th>Net</th></tr>' +
+      state.transactions.map(t => `<tr><td>${t.date}</td><td>${t.desc}</td><td>${TalentStageStore.money(t.gross)}</td><td class="text-danger">-${TalentStageStore.money(t.commission)}</td><td class="text-success">${TalentStageStore.money(t.net)}</td></tr>`).join("") + '</table>'
+    : '<p class="text-muted">No recent transactions.</p>';
+  document.getElementById("transactions").innerHTML = transactionsHtml;
+
   document.getElementById("withdrawals").innerHTML = '<table style="width:100%"><tr><th>Date</th><th>Amount</th><th>Method</th><th>Status</th></tr>' +
     state.withdrawals.map(w => `<tr><td>${w.date}</td><td>${TalentStageStore.money(w.amount)}</td><td>${w.method || "Bank transfer"}</td><td>${w.status}</td></tr>`).join("") + '</table>';
 }

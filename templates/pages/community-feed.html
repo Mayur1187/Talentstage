@@ -4,20 +4,58 @@
 <section class="section container">
   <div class="flex-between mb-3">
     <div><h1 class="section-title">Community Feed</h1><p class="section-subtitle">Tips, wins & resources from creators.</p></div>
-    <button class="btn btn-primary" onclick="showToast('Post shared (demo)')">Share Update</button>
   </div>
+  
+  <form id="new-post-form" class="glass-card mb-3">
+    <textarea name="text" rows="3" placeholder="Share a tip, win, or resource with the community..." required style="width: 100%; border: none; background: transparent; color: inherit; outline: none;"></textarea>
+    <div class="flex-between mt-2" style="align-items: center;">
+        <span class="text-sm text-muted">Posting as <span id="current-user-name"></span></span>
+        <button type="submit" class="btn btn-primary">Share Update</button>
+    </div>
+  </form>
+
   <div id="feed-posts"></div>
 </section>
 {% endblock %}
 {% block extra_js %}
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
 <script>
-document.addEventListener("DOMContentLoaded", () => {
-  document.getElementById("feed-posts").innerHTML = MOCK_DATA.feed.map(p => `
-    <article class="glass-card feed-post">
-      <div class="post-header"><div class="avatar">${p.avatar}</div><div><strong>${p.author}</strong><p class="text-xs text-muted">${p.time}</p></div></div>
-      <p>${p.text}</p>
-      <div class="post-actions"><button>♥ ${p.likes}</button><button>💬 ${p.comments}</button><button>↗ Share</button></div>
+function renderFeed() {
+  const state = TalentStageStore.get();
+  document.getElementById("current-user-name").textContent = state.currentUser.name;
+  
+  document.getElementById("feed-posts").innerHTML = (state.feed || []).map(p => `
+    <article class="glass-card feed-post mb-2">
+      <div class="post-header"><div class="avatar">${p.avatar || p.author.charAt(0)}</div><div><strong>${p.author}</strong><p class="text-xs text-muted">${p.time}</p></div></div>
+      <p class="mt-2">${p.text}</p>
+      <div class="post-actions mt-2"><button class="btn btn-sm btn-ghost">♥ ${p.likes || 0}</button><button class="btn btn-sm btn-ghost">💬 ${p.comments || 0}</button><button class="btn btn-sm btn-ghost">↗ Share</button></div>
     </article>`).join("");
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  renderFeed();
+  
+  document.getElementById("new-post-form").addEventListener("submit", event => {
+      event.preventDefault();
+      const form = event.currentTarget;
+      const text = form.text.value.trim();
+      const state = TalentStageStore.get();
+      
+      if (!state.feed) state.feed = [];
+      state.feed.unshift({
+          author: state.currentUser.name,
+          avatar: state.currentUser.name.charAt(0).toUpperCase(),
+          time: "Just now",
+          text: text,
+          likes: 0,
+          comments: 0
+      });
+      
+      TalentStageStore.save(state);
+      form.reset();
+      renderFeed();
+      showToast('Post shared with the community!');
+  });
 });
 </script>
 {% endblock %}

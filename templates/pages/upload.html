@@ -29,9 +29,14 @@
 <script>
 function renderPortfolioPreview(state) {
   document.getElementById("portfolio-preview").innerHTML = state.portfolio.map(project => `
-    <div class="glass-card mb-2">
-      <strong>${project.title}</strong>
-      <p class="text-sm text-muted">${project.category} · ${project.tools.join(", ")}</p>
+    <div class="glass-card mb-2" style="display:flex; gap:1rem; align-items:center;">
+      <div style="width: 60px; height: 60px; background-image: url('${project.image || ''}'); background-size: cover; background-position: center; border-radius: var(--radius-sm); background-color: var(--bg-navy); display:flex; align-items:center; justify-content:center; font-family: var(--font-heading); color: rgba(255,255,255,0.5);">
+        ${!project.image ? project.category.slice(0, 2).toUpperCase() : ''}
+      </div>
+      <div>
+        <strong style="font-family: var(--font-heading);">${project.title}</strong>
+        <p class="text-sm text-muted" style="margin-top: 0.25rem;">${project.category} · ${project.tools.join(", ")}</p>
+      </div>
     </div>`).join("");
 }
 document.addEventListener("DOMContentLoaded", () => {
