@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block extra_css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}"><link rel="stylesheet" href="{{ url_for('static', filename='css/contracts.css') }}">{% endblock %}
+{% block content %}
+<div class="dashboard-layout">
+  {% include 'partials/sidebar.html' %}
+  <main class="dashboard-main">
+    <h1>Active Contracts</h1>
+    <p class="text-muted">Manage deliverables, upload files by name, and message clients.</p>
+    <div id="contracts-list"></div>
+  </main>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+<script>
+function renderContracts() {
+  const state = TalentStageStore.get();
+  document.getElementById("contracts-list").innerHTML = state.contracts.map(c => `
+    <div class="glass-card mb-3">
+      <div class="flex-between"><h3>${c.title}</h3><span class="badge">${c.status}</span></div>
+      <p class="text-sm text-muted">${c.client} · ${TalentStageStore.money(c.value)} · Due ${c.dueDate}</p>
+      <div class="progress-bar mt-2"><span style="width:${c.progress}%"></span></div>
+      <ul class="deliverable-list mt-2">${c.deliverables.map((d, index) => `
+        <li><input type="checkbox" ${d.done ? "checked" : ""} data-contract="${c.id}" data-index="${index}"> ${d.name}</li>`).join("")}</ul>
+      <form class="contract-form mt-2" data-contract="${c.id}">
+        <div class="grid grid-2">
+          <div class="form-group"><label>Upload file name</label><input name="file" placeholder="final-components.zip"></div>
+          <div class="form-group"><label>Status</label><select name="status"><option>${c.status}</option><option>In Progress</option><option>Review</option><option>Completed</option></select></div>
+        </div>
+        <div class="form-group"><label>Message client</label><textarea name="message" rows="3" placeholder="Share a delivery update..."></textarea></div>
+        <button class="btn btn-sm btn-primary">Update Contract</button>
+      </form>
+      <p class="text-sm text-muted mt-2">Files: ${c.files.length ? c.files.join(", ") : "No files uploaded yet"}</p>
+      <div class="chat-preview mt-2">${c.messages.map(message => `<div class="chat-bubble ${message.from === "Freelancer" ? "sent" : "received"}"><strong>${message.from}:</strong> ${message.text}</div>`).join("")}</div>
+    </div>`).join("");
+
+  document.querySelectorAll(".deliverable-list input").forEach(input => {
+    input.addEventListener("change", event => {
+      const next = TalentStageStore.get();
+      const contract = next.contracts.find(item => item.id === Number(event.target.dataset.contract));
+      contract.deliverables[Number(event.target.dataset.index)].done = event.target.checked;
+      contract.progress = Math.round((contract.deliverables.filter(item => item.done).length / contract.deliverables.length) * 100);
+      TalentStageStore.save(next);
+      renderContracts();
+      showToast("Deliverable status updated");
+    });
+  });
+
+  document.querySelectorAll(".contract-form").forEach(form => {
+    form.addEventListener("submit", event => {
+      event.preventDefault();
+      const next = TalentStageStore.get();
+      const contract = next.contracts.find(item => item.id === Number(form.dataset.contract));
+      if (form.file.value.trim()) contract.files.push(form.file.value.trim());
+      if (form.message.value.trim()) contract.messages.push({ from: "Freelancer", text: form.message.value.trim() });
+      contract.status = form.status.value;
+      TalentStageStore.save(next);
+      renderContracts();
+      showToast("Contract updated");
+    });
+  });
+}
+document.addEventListener("DOMContentLoaded", renderContracts);
+</script>
+{% endblock %}

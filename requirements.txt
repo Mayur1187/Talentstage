@@ -1,0 +1,4 @@
+Flask==3.0.3
+gunicorn==22.0.0
+python-dotenv==1.0.1
+# Optional: pip install google-generativeai  (for GEMINI_API_KEY live AI)

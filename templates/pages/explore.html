@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/explore.css') }}">
+{% endblock %}
+{% block content %}
+<section class="section container">
+  <div class="explore-header reveal">
+    <div><h1 class="section-title">Explore Talents</h1><p class="section-subtitle">Discover verified freelancers across design, dev, video & writing.</p></div>
+    <div class="search-bar"><input type="search" id="talent-search" placeholder="Search skills or name..."><button class="btn btn-primary">Search</button></div>
+  </div>
+  <div class="filters-panel reveal">
+    <select id="filter-category"><option value="">All categories</option><option>Design</option><option>Development</option><option>Video</option><option>Writing</option></select>
+    <select><option>Any rate</option><option>Under $50/hr</option><option>$50–$80/hr</option></select>
+    <select><option>Verified only</option><option>All</option></select>
+  </div>
+  <div class="grid grid-3" id="talent-grid"></div>
+</section>
+{% endblock %}
+{% block extra_js %}<script src="{{ url_for('static', filename='js/explore.js') }}"></script>{% endblock %}

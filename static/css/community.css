@@ -1,0 +1,70 @@
+.feed-post {
+  padding: 1.25rem;
+  margin-bottom: 1rem;
+}
+
+.feed-post .post-header {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.feed-post .post-actions {
+  display: flex;
+  gap: 1.5rem;
+  margin-top: 1rem;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.feed-post .post-actions button {
+  background: none;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.feed-post .post-actions button:hover { color: var(--accent-pink); }
+
+.mentor-card .session-price { color: var(--success); font-weight: 600; }
+
+.message-thread {
+  display: flex;
+  gap: 1rem;
+  padding: 1rem;
+  border-bottom: 1px solid var(--glass-border);
+  cursor: pointer;
+  transition: background var(--transition);
+}
+
+.message-thread:hover, .message-thread.active { background: var(--glass); }
+
+.messages-layout {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 0;
+  min-height: calc(100vh - var(--navbar-height) - 4rem);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.messages-sidebar { border-right: 1px solid var(--glass-border); overflow-y: auto; }
+.messages-main { display: flex; flex-direction: column; }
+
+.notification-item {
+  display: flex;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--glass-border);
+  align-items: flex-start;
+}
+
+.notification-item.unread { background: rgba(124, 58, 237, 0.08); }
+
+@media (max-width: 768px) {
+  .messages-layout { grid-template-columns: 1fr; }
+  .messages-sidebar { max-height: 200px; }
+}

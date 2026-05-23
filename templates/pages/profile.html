@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block extra_css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/profile.css') }}"><link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">{% endblock %}
+{% block content %}
+<div class="dashboard-layout">
+  {% include 'partials/sidebar.html' %}
+  <main class="dashboard-main container">
+    <div class="profile-header">
+      <div class="avatar avatar-lg" id="profile-avatar">AM</div>
+      <div class="profile-info">
+        <h1 id="profile-name">Alex Morgan</h1>
+        <p class="text-muted" id="profile-title"></p>
+        <p class="mt-1" id="profile-badges"></p>
+        <div class="profile-actions">
+          <a href="/profile/edit" class="btn btn-primary">Edit Profile</a>
+          <a href="/upload" class="btn btn-secondary">Add Portfolio Project</a>
+          <a href="/portfolio-reviewer" class="btn btn-secondary">AI Portfolio Review</a>
+        </div>
+      </div>
+      <div class="completeness-ring" id="profile-completeness" style="--pct:78%" data-pct="78%"></div>
+    </div>
+    <h2 class="mt-3">Bio</h2>
+    <p class="text-muted glass-card" id="profile-bio"></p>
+    <div class="grid grid-2 mt-3">
+      <div class="glass-card"><h3>Skills</h3><div id="profile-skills" class="mt-1"></div></div>
+      <div class="glass-card"><h3>Rate & Availability</h3><p id="profile-rate" class="text-muted mt-1"></p></div>
+    </div>
+    <h2 class="mt-3">Portfolio</h2>
+    <div class="portfolio-grid" id="portfolio-grid"></div>
+    <h2 class="mt-3">Education</h2>
+    <p class="glass-card text-muted" id="profile-education"></p>
+    <h2 class="mt-3">Experience</h2>
+    <div class="timeline glass-card" id="profile-experience"></div>
+  </main>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const state = TalentStageStore.get();
+  const user = state.currentUser;
+  document.getElementById("profile-avatar").textContent = user.name.split(" ").map(part => part[0]).join("").slice(0, 2);
+  document.getElementById("profile-name").textContent = user.name;
+  document.getElementById("profile-title").textContent = `${user.title} · ${TalentStageStore.money(user.hourlyRate)}/hr · ${user.availability}`;
+  document.getElementById("profile-badges").innerHTML = user.badges.map(badge => `<span class="badge badge-verified">${badge}</span>`).join(" ") + ` <span class="badge">${user.availability}</span>`;
+  document.getElementById("profile-completeness").style.setProperty("--pct", `${user.completeness}%`);
+  document.getElementById("profile-completeness").dataset.pct = `${user.completeness}%`;
+  document.getElementById("profile-bio").textContent = user.bio;
+  document.getElementById("profile-skills").innerHTML = user.skills.map(skill => `<span class="tag">${skill}</span>`).join("");
+  document.getElementById("profile-rate").textContent = `${TalentStageStore.money(user.hourlyRate)} hourly · ${user.availability}`;
+  document.getElementById("profile-education").textContent = user.education;
+  document.getElementById("profile-experience").innerHTML = user.experience.split("\\n").map(item => `<div class="timeline-item">${item}</div>`).join("");
+  document.getElementById("portfolio-grid").innerHTML = state.portfolio.map(project => `
+    <div class="glass-card portfolio-item">
+      <div class="thumb">${project.category.slice(0, 2).toUpperCase()}</div>
+      <h3>${project.title}</h3>
+      <p class="text-muted">${project.desc}</p>
+      <p>${project.tools.map(tool => `<span class="tag">${tool}</span>`).join("")}</p>
+      ${project.link ? `<a class="btn btn-sm btn-secondary mt-2" href="${project.link}" target="_blank" rel="noreferrer">Open Project</a>` : ""}
+    </div>`).join("");
+});
+</script>
+{% endblock %}

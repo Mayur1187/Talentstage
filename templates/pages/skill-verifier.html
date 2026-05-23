@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% block extra_css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}"><link rel="stylesheet" href="{{ url_for('static', filename='css/ai-panels.css') }}">{% endblock %}
+{% block content %}
+<div class="dashboard-layout">
+  {% include 'partials/sidebar.html' %}
+  <main class="dashboard-main">
+    <h1>Skill Verifier</h1>
+    <p class="text-muted">Claim a skill, pass an AI-generated MCQ test, answer a practical prompt, and earn a verified badge.</p>
+    <div class="grid grid-2 mt-2">
+      <div class="glass-card">
+        <div class="form-group"><label>Skill to verify</label><select id="skill-select"><option>React</option><option>Python</option><option>Figma</option></select></div>
+        <button class="btn btn-primary" id="start-test">Start Test</button>
+      </div>
+      <div class="glass-card">
+        <h2>My Badges</h2>
+        <div id="badge-list" class="mt-2"></div>
+      </div>
+    </div>
+    <div class="ai-panel mt-3 hidden" id="test-panel" data-ai-panel="skill-test">
+      <div class="ai-loading"><div class="loader"></div><span>Generating questions...</span></div>
+      <div class="ai-result hidden" id="quiz-area"></div>
+    </div>
+  </main>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+<script>
+let questions = [], current = 0, score = 0, activeSkill = "React";
+
+function renderBadges() {
+  const state = TalentStageStore.get();
+  document.getElementById("badge-list").innerHTML = state.currentUser.badges.length
+    ? state.currentUser.badges.map(badge => `<span class="badge badge-verified">${badge}</span>`).join(" ")
+    : `<p class="text-muted">No verified badges yet.</p>`;
+}
+
+document.getElementById("start-test").addEventListener("click", async () => {
+  activeSkill = document.getElementById("skill-select").value;
+  document.getElementById("test-panel").classList.remove("hidden");
+  const panel = document.getElementById("test-panel");
+  panel.querySelector(".ai-loading")?.classList.remove("hidden");
+  const data = await TalentStageAI.request("skill-test", { skill: activeSkill });
+  panel.querySelector(".ai-loading")?.classList.add("hidden");
+  questions = data.questions || [];
+  current = 0; score = 0;
+  renderQuestion();
+});
+
+function renderQuestion() {
+  const area = document.getElementById("quiz-area");
+  area.classList.remove("hidden");
+  if (current >= questions.length) {
+    renderPractical(area);
+    return;
+  }
+  const q = questions[current];
+  area.innerHTML = `<p><strong>Q${current + 1}.</strong> ${q.q}</p>` +
+    q.options.map((o, i) => `<button class="mcq-option" data-i="${i}">${o}</button>`).join("");
+  area.querySelectorAll(".mcq-option").forEach(btn => {
+    btn.addEventListener("click", () => {
+      if (parseInt(btn.dataset.i, 10) === q.answer) { score++; btn.classList.add("correct"); }
+      else btn.classList.add("wrong");
+      setTimeout(() => { current++; renderQuestion(); }, 450);
+    });
+  });
+}
+
+function renderPractical(area) {
+  area.innerHTML = `
+    <h3>Practical Question</h3>
+    <p class="text-muted">Describe how you would build and ship a reusable ${activeSkill} feature for a client project.</p>
+    <textarea id="practical-answer" rows="5" placeholder="Mention props, state, API/data handling, testing, or delivery steps..."></textarea>
+    <button class="btn btn-primary mt-2" id="finish-test">Finish Verification</button>`;
+  document.getElementById("finish-test").addEventListener("click", () => {
+    const answer = document.getElementById("practical-answer").value.trim();
+    const practicalScore = answer.length >= 80 ? 2 : answer.length >= 40 ? 1 : 0;
+    const passed = score >= 7 && practicalScore >= 1;
+    const state = TalentStageStore.get();
+    const badge = `Verified ${activeSkill} Developer`;
+    if (passed && !state.currentUser.badges.includes(badge)) {
+      state.currentUser.badges.push(badge);
+      TalentStageStore.save(state);
+    }
+    area.innerHTML = `<h3>${passed ? "Passed!" : "Practice Needed"}</h3><p>MCQ score: ${score}/${questions.length}. Practical score: ${practicalScore}/2.</p>${passed ? `<span class="badge badge-verified">${badge}</span>` : "<p class='text-muted'>Improve the practical answer and try again.</p>"}`;
+    renderBadges();
+    showToast(passed ? "Skill badge verified" : "Skill test submitted");
+  });
+}
+
+document.addEventListener("DOMContentLoaded", renderBadges);
+</script>
+{% endblock %}

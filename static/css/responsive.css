@@ -1,0 +1,21 @@
+@media (max-width: 1024px) {
+  .dashboard-layout { grid-template-columns: 1fr; }
+  .sidebar { transform: translateX(-100%); position: fixed; z-index: 500; transition: transform var(--transition); }
+  .sidebar.open { transform: translateX(0); }
+  .sidebar-toggle { display: flex !important; }
+}
+
+@media (max-width: 768px) {
+  .section { padding: 2.5rem 0; }
+  .hero-content { text-align: center; }
+  .hero-cta { justify-content: center; }
+  .stats-row { grid-template-columns: repeat(2, 1fr) !important; }
+  .hide-mobile { display: none !important; }
+  .dashboard-main { padding: 1rem; }
+}
+
+@media (max-width: 480px) {
+  .stats-row { grid-template-columns: 1fr !important; }
+  .btn { width: 100%; }
+  .search-bar { max-width: 100%; }
+}

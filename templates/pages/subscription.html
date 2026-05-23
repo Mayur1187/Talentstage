@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block extra_css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}"><link rel="stylesheet" href="{{ url_for('static', filename='css/marketplace.css') }}">{% endblock %}
+{% block content %}
+<div class="dashboard-layout">
+  {% include 'partials/sidebar.html' %}
+  <main class="dashboard-main">
+    <h1>Pro Freelancer</h1>
+    <p class="text-muted">Featured profile, priority AI match, unlimited proposals — sandbox checkout.</p>
+    <div class="grid grid-2 mt-3" style="max-width:800px">
+      <div class="glass-card pricing-card">
+        <h3>Free</h3>
+        <p class="price">$0</p>
+        <ul><li>5 proposals/month</li><li>Basic profile</li><li>Community access</li></ul>
+        <button class="btn btn-ghost" disabled>Current Plan</button>
+      </div>
+      <div class="glass-card pricing-card featured">
+        <span class="badge badge-ai">Popular</span>
+        <h3>Pro</h3>
+        <p class="price">$19<span class="text-sm">/mo</span></p>
+        <ul><li>Featured profile</li><li>Priority AI matching</li><li>Unlimited proposals</li><li>Advanced analytics</li></ul>
+        <button class="btn btn-primary" onclick="showToast('Checkout complete (sandbox)')">Upgrade — Sandbox</button>
+      </div>
+    </div>
+  </main>
+</div>
+{% endblock %}
+{% block extra_js %}<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>{% endblock %}

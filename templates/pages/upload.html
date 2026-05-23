@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block extra_css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">{% endblock %}
+{% block content %}
+<div class="dashboard-layout">
+  {% include 'partials/sidebar.html' %}
+  <main class="dashboard-main">
+    <h1>Upload Portfolio Project</h1>
+    <p class="text-muted">Add title, description, tech/tools, image or project link, and category.</p>
+    <div class="grid grid-2 mt-2">
+      <form id="portfolio-form" class="glass-card">
+        <div class="form-group"><label>Title</label><input name="title" required placeholder="FinTech Dashboard Redesign"></div>
+        <div class="form-group"><label>Description</label><textarea name="desc" rows="4" required placeholder="Include measurable outcomes..."></textarea></div>
+        <div class="form-group"><label>Tools / Tech</label><input name="tools" required placeholder="Figma, React"></div>
+        <div class="form-group"><label>Category</label><select name="category"><option>Design</option><option>Development</option><option>Video</option><option>Writing</option><option>AI</option></select></div>
+        <div class="form-group"><label>Image URL</label><input name="image" placeholder="https://..."></div>
+        <div class="form-group"><label>Project link</label><input name="link" placeholder="https://..."></div>
+        <button class="btn btn-primary">Add to Portfolio</button>
+      </form>
+      <div class="glass-card">
+        <h2>Portfolio Gallery</h2>
+        <div id="portfolio-preview" class="mt-2"></div>
+      </div>
+    </div>
+  </main>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+<script>
+function renderPortfolioPreview(state) {
+  document.getElementById("portfolio-preview").innerHTML = state.portfolio.map(project => `
+    <div class="glass-card mb-2">
+      <strong>${project.title}</strong>
+      <p class="text-sm text-muted">${project.category} · ${project.tools.join(", ")}</p>
+    </div>`).join("");
+}
+document.addEventListener("DOMContentLoaded", () => {
+  const state = TalentStageStore.get();
+  const form = document.getElementById("portfolio-form");
+  renderPortfolioPreview(state);
+  form.addEventListener("submit", event => {
+    event.preventDefault();
+    state.portfolio.unshift({
+      id: Date.now(),
+      title: form.title.value.trim(),
+      desc: form.desc.value.trim(),
+      tools: TalentStageStore.splitCSV(form.tools.value),
+      category: form.category.value,
+      image: form.image.value.trim(),
+      link: form.link.value.trim(),
+    });
+    TalentStageStore.save(state);
+    form.reset();
+    renderPortfolioPreview(state);
+    showToast("Project added to portfolio");
+  });
+});
+</script>
+{% endblock %}

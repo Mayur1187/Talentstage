@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/landing.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/ai-panels.css') }}">
+{% endblock %}
+{% block content %}
+<section class="hero container">
+  <div class="hero-grid">
+    <div class="hero-content reveal">
+      <h1>Where <span class="gradient-text">Creators</span> Get Discovered & Hired</h1>
+      <p>Showcase your portfolio, bid on projects, and let AI match you with clients who value your craft.</p>
+      <div class="hero-cta">
+        <a href="/signup" class="btn btn-primary">Start Free</a>
+        <a href="/explore" class="btn btn-secondary">Explore Talents</a>
+      </div>
+    </div>
+    <div class="hero-visual reveal">
+      <div class="hero-center">✦</div>
+      <div class="orbit-card glass-card"><span class="badge badge-verified">Verified React</span><br><strong>Priya S.</strong></div>
+      <div class="orbit-card glass-card"><span class="text-sm text-muted">$3.8k project won</span></div>
+      <div class="orbit-card glass-card"><span class="badge badge-ai">AI Match 96%</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="section container reveal">
+  <h2 class="section-title">Featured Freelancers</h2>
+  <p class="section-subtitle">Top-rated creators ready for your next project.</p>
+  <div class="grid grid-3" id="featured-freelancers"></div>
+</section>
+
+<section class="section container reveal">
+  <h2 class="section-title">Trending Challenges</h2>
+  <p class="section-subtitle">Weekly community skill challenges with real prizes.</p>
+  <div class="grid grid-3" id="trending-challenges"></div>
+  <p class="mt-2"><a href="/competitions" class="btn btn-ghost">View All Challenges</a></p>
+</section>
+
+<section class="section container reveal">
+  <h2 class="section-title">AI-Powered Decisions</h2>
+  <p class="section-subtitle">Five intelligent features that help freelancers and clients win together.</p>
+  <div class="ai-showcase">
+    <div class="ai-feature-card glass-card" data-ai-feature="match"><span class="badge badge-ai">Match</span><h4>Smart Freelancer Match</h4><p>Rank top 5 freelancers by skills, portfolio, rating & budget.</p></div>
+    <div class="ai-feature-card glass-card" data-ai-feature="evaluate"><span class="badge badge-ai">Evaluate</span><h4>Proposal Evaluator</h4><p>Score proposals on relevance, clarity & value for money.</p></div>
+    <div class="ai-feature-card glass-card" data-ai-feature="portfolio-review"><span class="badge badge-ai">Review</span><h4>Portfolio Reviewer</h4><p>Actionable tips to strengthen your showcase.</p></div>
+    <div class="ai-feature-card glass-card" data-ai-feature="skill-test"><span class="badge badge-ai">Verify</span><h4>Skill Verifier</h4><p>10-question test → Verified badge on your profile.</p></div>
+    <div class="ai-feature-card glass-card" data-ai-feature="scope"><span class="badge badge-ai">Scope</span><h4>Project Scoping Assistant</h4><p>Turn vague ideas into structured briefs & budgets.</p></div>
+  </div>
+</section>
+
+<section class="section container reveal">
+  <div class="stats-row" id="platform-stats"></div>
+</section>
+
+<section class="section container reveal">
+  <h2 class="section-title">What Creators Say</h2>
+  <div class="grid grid-3" id="testimonials"></div>
+</section>
+
+<section class="section container reveal">
+  <div class="cta-banner">
+    <h2>Ready to join the creator universe?</h2>
+    <p class="text-muted mt-1 mb-3">Free to start. Pro plans unlock featured profiles & priority AI matching.</p>
+    <a href="/signup" class="btn btn-primary">Create Your Account</a>
+  </div>
+</section>
+{% endblock %}
+{% block extra_js %}
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const f = document.getElementById("featured-freelancers");
+  if (f) f.innerHTML = MOCK_DATA.freelancers.slice(0, 3).map(t => `
+    <a href="/talent/${t.id}" class="glass-card talent-card">
+      <div class="card-header"><div class="avatar">${t.avatar}</div><div class="card-meta"><h3>${t.name}</h3><p class="text-sm text-muted">${t.title}</p></div></div>
+      <p class="rate">$${t.rate}/hr · ${t.rating} ★</p>
+      <div class="mt-1">${t.skills.map(s => `<span class="tag">${s}</span>`).join("")}</div>
+    </a>`).join("");
+  const c = document.getElementById("trending-challenges");
+  if (c) c.innerHTML = MOCK_DATA.challenges.map(ch => `
+    <a href="/competitions/${ch.id}" class="glass-card"><h4>${ch.title}</h4><p class="challenge-prize text-sm">${ch.prize}</p><p class="text-muted text-sm">${ch.entries} entries · ${ch.ends}</p></a>`).join("");
+  const s = document.getElementById("platform-stats");
+  if (s) s.innerHTML = `
+    <div class="glass-card stat-card"><div class="stat-value">${(MOCK_DATA.stats.freelancers/1000).toFixed(1)}k+</div><div class="stat-label">Freelancers</div></div>
+    <div class="glass-card stat-card"><div class="stat-value">${MOCK_DATA.stats.projects}+</div><div class="stat-label">Projects Posted</div></div>
+    <div class="glass-card stat-card"><div class="stat-value">$${MOCK_DATA.stats.paidOut}M</div><div class="stat-label">Paid Out</div></div>
+    <div class="glass-card stat-card"><div class="stat-value">${MOCK_DATA.stats.countries}</div><div class="stat-label">Countries</div></div>`;
+  const t = document.getElementById("testimonials");
+  if (t) t.innerHTML = MOCK_DATA.testimonials.map(x => `
+    <div class="glass-card testimonial-card"><p>"${x.text}"</p><p class="author">${x.author} · ${x.role}</p></div>`).join("");
+  document.querySelectorAll("[data-ai-feature]").forEach(card => {
+    card.addEventListener("click", () => {
+      const feat = card.dataset.aiFeature;
+      const routes = { match: "/client/discover", evaluate: "/client/proposals/1", "portfolio-review": "/portfolio-reviewer", "skill-test": "/skill-verifier", scope: "/client/post-project" };
+      window.location.href = routes[feat] || "/";
+    });
+  });
+});
+</script>
+{% endblock %}

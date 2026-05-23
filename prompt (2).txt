@@ -1,0 +1,487 @@
+# TalentStage Frontend Master Prompt
+
+You are a senior full-stack product engineer, elite frontend architect, UI/UX designer, Flask project architect, and hackathon-winning prototype specialist.
+
+Your task is to build the COMPLETE frontend foundation for a project called TalentStage.
+
+TalentStage is a futuristic creator and talent discovery platform where users can:
+- Showcase talents
+- Join competitions
+- Build creator portfolios
+- Get discovered by recruiters
+- Receive AI-powered feedback
+- Participate in challenges
+- Connect with collaborators
+
+This project is being built for a hackathon.
+The result must look visually stunning, production-ready, startup-level, scalable, and deployment-ready.
+
+You MUST strictly follow all requirements from:
+- brandrequirements.md
+
+--------------------------------------------------
+# PRIMARY OBJECTIVE
+--------------------------------------------------
+
+Build a FULLY ORGANIZED frontend foundation that:
+- Looks premium
+- Is scalable
+- Is future-ready
+- Is Flask-compatible
+- Is deployable immediately
+- Has proper architecture from day one
+
+You are NOT building backend functionality yet.
+
+You ARE preparing the entire frontend structure and deployment ecosystem so backend development can begin smoothly later.
+
+--------------------------------------------------
+# VERY IMPORTANT TECH STACK RULES
+--------------------------------------------------
+
+USE ONLY:
+- HTML5
+- CSS3
+- Vanilla JavaScript
+- Flask-compatible templating
+
+BACKEND TARGET:
+- Flask (Python)
+
+DO NOT USE:
+- React
+- Vue
+- Angular
+- Bootstrap
+- Tailwind
+- jQuery
+- Material UI
+- Any frontend framework
+
+--------------------------------------------------
+# VERY IMPORTANT PROJECT RULE
+--------------------------------------------------
+
+Even though backend logic is NOT being implemented right now:
+
+YOU MUST STILL:
+- Prepare backend-ready structure
+- Prepare deployment-ready structure
+- Prepare configuration files
+- Prepare scalability-ready folders
+- Prepare maintainable architecture
+- Prepare reusable layouts/components
+
+This project must already look like a serious startup codebase.
+
+--------------------------------------------------
+# REQUIRED PROJECT STRUCTURE
+--------------------------------------------------
+
+Create a professional Flask-compatible structure like this:
+
+project/
+│
+├── app.py
+├── requirements.txt
+├── README.md
+├── .gitignore
+├── .env.example
+├── vercel.json
+├── runtime.txt
+├── Procfile
+├── LICENSE
+│
+├── instance/
+│   └── config.py
+│
+├── static/
+│   ├── css/
+│   │   ├── global.css
+│   │   ├── variables.css
+│   │   ├── animations.css
+│   │   ├── components.css
+│   │   ├── responsive.css
+│   │   ├── landing.css
+│   │   ├── dashboard.css
+│   │   ├── profile.css
+│   │   ├── explore.css
+│   │   ├── competitions.css
+│   │   ├── auth.css
+│   │   └── recruiter.css
+│   │
+│   ├── js/
+│   │   ├── main.js
+│   │   ├── animations.js
+│   │   ├── navbar.js
+│   │   ├── dashboard.js
+│   │   ├── profile.js
+│   │   ├── explore.js
+│   │   ├── competitions.js
+│   │   ├── auth.js
+│   │   └── recruiter.js
+│   │
+│   ├── assets/
+│   │   ├── images/
+│   │   ├── logos/
+│   │   ├── icons/
+│   │   ├── videos/
+│   │   └── illustrations/
+│
+├── templates/
+│   ├── base.html
+│   ├── partials/
+│   │   ├── navbar.html
+│   │   ├── footer.html
+│   │   ├── sidebar.html
+│   │   ├── modals.html
+│   │   └── loaders.html
+│   │
+│   ├── pages/
+│   │   ├── index.html
+│   │   ├── explore.html
+│   │   ├── talent-details.html
+│   │   ├── competitions.html
+│   │   ├── competition-details.html
+│   │   ├── dashboard.html
+│   │   ├── profile.html
+│   │   ├── edit-profile.html
+│   │   ├── upload.html
+│   │   ├── recruiter-dashboard.html
+│   │   ├── talent-discovery.html
+│   │   ├── login.html
+│   │   ├── signup.html
+│   │   ├── messages.html
+│   │   └── notifications.html
+│
+├── docs/
+│   ├── frontend-architecture.md
+│   ├── component-guide.md
+│   ├── deployment-guide.md
+│   └── folder-structure.md
+│
+└── screenshots/
+    └── preview-images/
+
+--------------------------------------------------
+# IMPORTANT FUTURE-READY FILES
+--------------------------------------------------
+
+You MUST generate proper starter versions of:
+
+1. README.md
+- Project overview
+- Features
+- Folder structure
+- Installation steps
+- Run instructions
+- Deployment instructions
+- Future roadmap
+
+2. requirements.txt
+Include useful Flask-related dependencies:
+- Flask
+- gunicorn
+- python-dotenv
+
+3. .gitignore
+Include:
+- __pycache__
+- .env
+- venv
+- node_modules
+- DS_Store
+- build files
+
+4. .env.example
+Include example environment variables.
+
+5. vercel.json
+Prepare deployment configuration for Flask.
+
+6. runtime.txt
+Include Python runtime version.
+
+7. Procfile
+Prepare for Railway/Render deployment.
+
+8. LICENSE
+Use MIT License.
+
+9. deployment-guide.md
+Explain deployment steps for:
+- Vercel
+- Railway
+- Render
+
+--------------------------------------------------
+# DESIGN REQUIREMENTS
+--------------------------------------------------
+
+The interface must feel:
+- Futuristic
+- Premium
+- Creator-focused
+- Competitive
+- Dynamic
+- Interactive
+
+Avoid:
+- Generic bootstrap appearance
+- Basic layouts
+- Corporate dashboard look
+- Flat design
+- School-project aesthetics
+
+The UI must feel like a modern funded startup.
+
+--------------------------------------------------
+# VISUAL STYLE
+--------------------------------------------------
+
+Use:
+- Dark futuristic backgrounds
+- Neon gradients
+- Soft glowing effects
+- Glassmorphism
+- Floating UI elements
+- Layered sections
+- Dynamic hover interactions
+
+The interface should feel like:
+“An AI-powered creator universe.”
+
+--------------------------------------------------
+# COLOR SYSTEM
+--------------------------------------------------
+
+Primary:
+- Purple (#7C3AED)
+- Neon Blue (#00D4FF)
+
+Secondary:
+- Pink (#FF4D9D)
+- Cyan accents
+
+Backgrounds:
+- Deep navy
+- Black gradients
+- Glass overlays
+
+--------------------------------------------------
+# TYPOGRAPHY
+--------------------------------------------------
+
+Use Google Fonts:
+- Poppins
+OR
+- Inter
+
+Typography must feel:
+- Bold
+- Modern
+- High contrast
+- Cinematic
+
+--------------------------------------------------
+# PAGE REQUIREMENTS
+--------------------------------------------------
+
+Create FULL frontend pages for:
+
+PUBLIC:
+- Landing Page
+- Explore Talents
+- Talent Details
+- Competition Listings
+- Competition Details
+- Login
+- Signup
+
+USER:
+- Dashboard
+- Profile
+- Edit Profile
+- Upload Talent
+- Messages
+- Notifications
+
+RECRUITER:
+- Recruiter Dashboard
+- Talent Discovery
+- Saved Creators
+
+--------------------------------------------------
+# LANDING PAGE REQUIREMENTS
+--------------------------------------------------
+
+Include:
+1. Hero section
+2. Featured creators
+3. Trending competitions
+4. AI features showcase
+5. Statistics section
+6. Testimonials
+7. CTA banner
+8. Premium footer
+
+Hero section must feel visually cinematic.
+
+--------------------------------------------------
+# COMPONENT REQUIREMENTS
+--------------------------------------------------
+
+Create reusable:
+- Navbar
+- Sidebar
+- Cards
+- Modals
+- Buttons
+- Search bars
+- Filters
+- Notifications
+- Tags
+- Profile widgets
+- Statistics cards
+
+--------------------------------------------------
+# ANIMATION REQUIREMENTS
+--------------------------------------------------
+
+Use ONLY:
+- CSS animations
+- Vanilla JS interactions
+
+Include:
+- Hover glows
+- Floating cards
+- Scroll reveal
+- Gradient animations
+- Smooth transitions
+
+Animations should feel:
+- Premium
+- Fast
+- Smooth
+
+--------------------------------------------------
+# RESPONSIVE DESIGN RULES
+--------------------------------------------------
+
+The project must be:
+- Mobile-first
+- Tablet optimized
+- Desktop optimized
+
+No broken layouts allowed.
+
+--------------------------------------------------
+# HTML REQUIREMENTS
+--------------------------------------------------
+
+Use:
+- Semantic HTML5
+- Flask template compatibility
+- Proper template inheritance
+
+Prepare templates for future Flask routing.
+
+--------------------------------------------------
+# CSS REQUIREMENTS
+--------------------------------------------------
+
+Use:
+- CSS variables
+- Modular styling
+- Reusable utility classes
+- Organized structure
+
+Avoid:
+- Inline CSS
+- Messy code
+- Repeated styles
+
+--------------------------------------------------
+# JAVASCRIPT REQUIREMENTS
+--------------------------------------------------
+
+Use Vanilla JS only.
+
+Implement frontend-only interactions:
+- Navigation toggles
+- Search UI
+- Filters
+- Tabs
+- Sliders
+- Modals
+- Notifications
+- Scroll animations
+
+DO NOT:
+- Implement backend APIs
+- Create database logic
+- Create authentication backend
+
+--------------------------------------------------
+# MOCK DATA REQUIREMENTS
+--------------------------------------------------
+
+Use realistic content:
+- Creator names
+- Competition titles
+- Skill tags
+- User bios
+- Statistics
+- Talent categories
+
+DO NOT USE:
+- Lorem ipsum
+- Generic placeholders everywhere
+
+--------------------------------------------------
+# CODE QUALITY RULES
+--------------------------------------------------
+
+Write:
+- Clean code
+- Maintainable code
+- Organized files
+- Proper comments
+- Scalable architecture
+
+The codebase should already feel production-ready.
+
+--------------------------------------------------
+# FINAL QUALITY STANDARD
+--------------------------------------------------
+
+The final project must:
+- Look like a funded startup
+- Impress hackathon judges immediately
+- Be deployment-ready
+- Be scalable
+- Be cleanly organized
+- Be future backend-ready
+
+--------------------------------------------------
+# IMPORTANT FINAL RULES
+--------------------------------------------------
+
+ALWAYS:
+- Generate COMPLETE files
+- Include all CSS and JS links
+- Maintain design consistency
+- Build reusable structures
+- Generate deployable structure
+- Prepare future-ready architecture
+
+NEVER:
+- Leave TODO placeholders
+- Generate incomplete pages
+- Use frontend frameworks
+- Break Flask compatibility
+- Implement backend logic
+
+The mission is:
+
+“Create a cinematic, startup-level, hackathon-winning frontend foundation that already feels production-ready before backend development even begins.”

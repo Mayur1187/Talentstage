@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block extra_css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}"><link rel="stylesheet" href="{{ url_for('static', filename='css/ai-panels.css') }}">{% endblock %}
+{% block content %}
+<div class="dashboard-layout">
+  {% include 'partials/sidebar.html' %}
+  <main class="dashboard-main">
+    <h1>AI Portfolio Reviewer</h1>
+    <p class="text-muted">Get actionable suggestions to improve your showcase.</p>
+    <div class="ai-panel" data-ai-panel="portfolio-review">
+      <div class="ai-panel-header"><div class="ai-icon">✦</div><div><h3>Portfolio Analysis</h3><p class="text-sm text-muted">Powered by TalentStage AI</p></div></div>
+      <button class="btn btn-primary" onclick="runAI('portfolio-review', {})">Analyze My Portfolio</button>
+      <div class="ai-loading hidden"><div class="loader"></div><span>Reviewing projects...</span></div>
+      <div class="ai-result hidden mt-2"></div>
+    </div>
+    <div class="portfolio-grid mt-3" id="portfolio-grid"></div>
+  </main>
+</div>
+{% endblock %}
+{% block extra_js %}<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script><script src="{{ url_for('static', filename='js/profile.js') }}"></script>{% endblock %}

@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block extra_css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}"><link rel="stylesheet" href="{{ url_for('static', filename='css/recruiter.css') }}">{% endblock %}
+{% block content %}
+<div class="dashboard-layout">
+  {% include 'partials/sidebar.html' %}
+  <main class="dashboard-main">
+    <div id="project-detail"></div>
+    <a href="/client/proposals/{{ project_id }}" class="btn btn-primary mt-2">View Proposals (AI Evaluated)</a>
+    <a href="/client/discover" class="btn btn-secondary mt-2">Smart Match Freelancers</a>
+  </main>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const p = getProject({{ project_id }});
+  document.getElementById("project-detail").innerHTML = `
+    <h1>${p.title}</h1>
+    <p class="text-muted">${p.client} · ${p.status}</p>
+    <p class="budget mt-2">$${p.budgetMin.toLocaleString()} – $${p.budgetMax.toLocaleString()} · ${p.type}</p>
+    <p>Deadline: ${p.deadline}</p>
+    <div class="mt-2">${p.skills.map(s => `<span class="tag">${s}</span>`).join("")}</div>`;
+});
+</script>
+{% endblock %}

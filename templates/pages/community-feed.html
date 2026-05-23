@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block extra_css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/community.css') }}">{% endblock %}
+{% block content %}
+<section class="section container">
+  <div class="flex-between mb-3">
+    <div><h1 class="section-title">Community Feed</h1><p class="section-subtitle">Tips, wins & resources from creators.</p></div>
+    <button class="btn btn-primary" onclick="showToast('Post shared (demo)')">Share Update</button>
+  </div>
+  <div id="feed-posts"></div>
+</section>
+{% endblock %}
+{% block extra_js %}
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  document.getElementById("feed-posts").innerHTML = MOCK_DATA.feed.map(p => `
+    <article class="glass-card feed-post">
+      <div class="post-header"><div class="avatar">${p.avatar}</div><div><strong>${p.author}</strong><p class="text-xs text-muted">${p.time}</p></div></div>
+      <p>${p.text}</p>
+      <div class="post-actions"><button>♥ ${p.likes}</button><button>💬 ${p.comments}</button><button>↗ Share</button></div>
+    </article>`).join("");
+});
+</script>
+{% endblock %}

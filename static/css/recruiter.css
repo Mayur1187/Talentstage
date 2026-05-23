@@ -1,0 +1,19 @@
+.project-card .budget { color: var(--success); font-weight: 600; }
+.project-card .deadline { font-size: 0.85rem; color: var(--text-muted); }
+
+.proposal-card { position: relative; }
+.proposal-card.recommended::before {
+  content: 'AI Recommended';
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+}
+
+.inbox-badge {
+  background: var(--accent-pink);
+  color: white;
+  font-size: 0.7rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: 99px;
+  margin-left: 0.5rem;
+}

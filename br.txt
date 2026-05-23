@@ -1,0 +1,58 @@
+ TalentStage — Creator & Freelancer Portfolio + Hiring
+Marketplace
+The Vision: Build a marketplace where creative and technical freelancers (designers,
+developers, video editors, content writers) can showcase their work, get discovered by
+clients, bid on projects, and collaborate — with AI helping both sides make better
+decisions.
+What You Must Build:
+Freelancer Side
+● Rich portfolio profile: bio, skills, hourly rate, availability status, education, work
+experience
+● Portfolio gallery: upload or link projects — each project has title, description,
+tech/tools used, images/links, and category
+● Skill badges: verified through a short AI-generated skill test (MCQ + practical
+question) — "Verified React Developer" badge
+● Proposal system: browse open projects, submit proposals with custom bid amount,
+timeline, and cover message
+● Active contracts: manage ongoing projects, update deliverable status, upload files,
+communicate with client
+● Earnings tracker: total earned, pending payments, withdrawal history (simulated)
+● Reviews received from past clients
+Client Side
+● Post a project: title, description, required skills, budget range, deadline, project type
+(Fixed / Hourly)
+● View proposals: shortlist, message, and hire a freelancer
+● Active projects: track deliverables, approve submissions, request revisions
+● Payment milestone system: release payment when a milestone is approved
+(sandbox)
+● Rate and review freelancer after project completion
+● Saved freelancers: bookmark profiles for future work
+AI Features
+● Smart Freelancer Match: client posts a project → AI ranks the top 5 matching
+freelancers based on skills, portfolio quality, rating, and budget fit
+● Proposal Evaluator: AI scores each proposal submitted for a project on: relevance,
+clarity, and value for money — gives client a shortlist recommendation
+● Portfolio Reviewer: freelancer submits portfolio → AI gives improvement
+suggestions: "Your descriptions are too short", "Add measurable outcomes to
+project 3", "Missing live links in 4 projects"
+● Skill Verifier: AI generates a 10-question skill test based on claimed skill → on
+passing, profile gets a "Verified" badge
+● Project Scoping Assistant: client describes a vague need → AI generates a
+structured project brief with suggested deliverables, timeline, and realistic budget
+range
+Community
+● Public feed: freelancers share tips, wins, and resources
+● Skill challenges: weekly community challenge (e.g. "Design a dashboard in Figma")
+— top submission gets featured
+● Mentorship matching: experienced freelancers can offer mentorship sessions (paid
+or free)
+User System
+● Single account, choose role (Freelancer / Client / Both)
+● Identity verification step: upload student ID or LinkedIn URL (show as a UI flow)
+● Profile completeness score: nudges user to fill in missing sections
+Payments
+● Sandbox milestone payments
+● Platform commission simulation (10% on each transaction — show in earnings
+breakdown)
+● Pro Freelancer subscription: featured profile, priority in AI match, unlimited
+proposals — sandbox checkout

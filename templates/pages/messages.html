@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block extra_css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/community.css') }}"><link rel="stylesheet" href="{{ url_for('static', filename='css/contracts.css') }}">{% endblock %}
+{% block content %}
+<section class="section container">
+  <h1 class="section-title">Messages</h1>
+  <div class="messages-layout glass-card">
+    <aside class="messages-sidebar" id="threads"></aside>
+    <div class="messages-main">
+      <div class="chat-preview" style="flex:1;margin:1rem">
+        <div class="chat-bubble received">Can we schedule a kickoff call for the dashboard project?</div>
+        <div class="chat-bubble sent">Absolutely — I'm free Thursday 2pm EST.</div>
+      </div>
+      <div style="padding:1rem;border-top:1px solid var(--glass-border)">
+        <input placeholder="Type a message..." style="width:calc(100% - 100px);display:inline-block">
+        <button class="btn btn-primary btn-sm" onclick="showToast('Message sent (demo)')">Send</button>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+{% block extra_js %}
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  document.getElementById("threads").innerHTML = MOCK_DATA.messages.map((m, i) => `
+    <div class="message-thread ${i===0?'active':''}"><div class="avatar">${m.name[0]}</div><div><strong>${m.name}</strong><p class="text-sm text-muted">${m.preview}</p></div></div>`).join("");
+});
+</script>
+{% endblock %}

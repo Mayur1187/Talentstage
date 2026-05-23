@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block extra_css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">{% endblock %}
+{% block content %}
+<div class="dashboard-layout">
+  {% include 'partials/sidebar.html' %}
+  <main class="dashboard-main">
+    <h1>Edit Profile</h1>
+    <p class="text-muted">Update the freelancer profile clients see before they invite you to work.</p>
+    <form id="profile-form" class="glass-card mt-2" style="max-width:720px">
+      <div class="form-group"><label>Name</label><input name="name" required></div>
+      <div class="form-group"><label>Title</label><input name="title" required></div>
+      <div class="form-group"><label>Bio</label><textarea name="bio" rows="4" required></textarea></div>
+      <div class="form-group"><label>Hourly rate ($)</label><input name="hourlyRate" type="number" min="1" required></div>
+      <div class="form-group"><label>Availability</label><select name="availability"><option>Available</option><option>Busy</option><option>Limited</option></select></div>
+      <div class="form-group"><label>Skills (comma separated)</label><input name="skills" required></div>
+      <div class="form-group"><label>Education</label><input name="education" required></div>
+      <div class="form-group"><label>Work experience</label><textarea name="experience" rows="4" required></textarea></div>
+      <button class="btn btn-primary">Save Changes</button>
+      <a href="/profile" class="btn btn-ghost">View Profile</a>
+    </form>
+  </main>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const state = TalentStageStore.get();
+  const form = document.getElementById("profile-form");
+  const user = state.currentUser;
+  form.name.value = user.name;
+  form.title.value = user.title;
+  form.bio.value = user.bio;
+  form.hourlyRate.value = user.hourlyRate;
+  form.availability.value = user.availability;
+  form.skills.value = user.skills.join(", ");
+  form.education.value = user.education;
+  form.experience.value = user.experience;
+  form.addEventListener("submit", event => {
+    event.preventDefault();
+    state.currentUser = {
+      ...state.currentUser,
+      name: form.name.value.trim(),
+      title: form.title.value.trim(),
+      bio: form.bio.value.trim(),
+      hourlyRate: Number(form.hourlyRate.value),
+      availability: form.availability.value,
+      skills: TalentStageStore.splitCSV(form.skills.value),
+      education: form.education.value.trim(),
+      experience: form.experience.value.trim(),
+      completeness: 94,
+    };
+    TalentStageStore.save(state);
+    showToast("Profile saved");
+  });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block extra_css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}"><link rel="stylesheet" href="{{ url_for('static', filename='css/marketplace.css') }}">{% endblock %}
+{% block content %}
+<div class="dashboard-layout">
+  {% include 'partials/sidebar.html' %}
+  <main class="dashboard-main">
+    <h1>Milestones & Payments</h1>
+    <p class="text-muted">Sandbox milestone payments — release when deliverables are approved.</p>
+    <div id="milestones-list" class="mt-2"></div>
+  </main>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  document.getElementById("milestones-list").innerHTML = MOCK_DATA.milestones.map(m => `
+    <div class="milestone-item glass-card">
+      <span class="milestone-status ${m.status}">${m.status}</span>
+      <div><strong>${m.name}</strong><p class="text-sm text-muted">$${m.amount.toLocaleString()}</p></div>
+      ${m.status === 'approved' ? '<button class="btn btn-sm btn-primary" onclick="showToast(\'Payment released (sandbox)\')">Release Payment</button>' : ''}
+      ${m.status === 'pending' ? '<button class="btn btn-sm btn-secondary" onclick="showToast(\'Approved for release\')">Approve</button>' : ''}
+    </div>`).join("");
+});
+</script>
+{% endblock %}

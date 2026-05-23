@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block extra_css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}"><link rel="stylesheet" href="{{ url_for('static', filename='css/profile.css') }}">{% endblock %}
+{% block content %}
+<div class="dashboard-layout">
+  {% include 'partials/sidebar.html' %}
+  <main class="dashboard-main">
+    <h1>Reviews Received</h1>
+    <p class="text-muted">Client feedback from completed projects.</p>
+    <div id="rating-summary" class="glass-card mt-2" style="max-width:520px"></div>
+    <h2 class="mt-3">Add Demo Review</h2>
+    <form id="review-form" class="glass-card mt-2" style="max-width:520px">
+      <div class="form-group"><label>Client</label><input name="client" required></div>
+      <div class="form-group"><label>Project</label><input name="project" required></div>
+      <div class="form-group"><label>Rating</label><select name="rating"><option>5</option><option>4</option><option>3</option></select></div>
+      <div class="form-group"><label>Review</label><textarea name="text" rows="3" required></textarea></div>
+      <button class="btn btn-primary">Add Review</button>
+    </form>
+    <h2 class="mt-3">Client Feedback</h2>
+    <div class="grid grid-2" id="reviews-received"></div>
+  </main>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+<script>
+function renderReviews() {
+  const state = TalentStageStore.get();
+  const average = state.reviews.length
+    ? (state.reviews.reduce((sum, review) => sum + Number(review.rating || 0), 0) / state.reviews.length).toFixed(1)
+    : "0.0";
+  document.getElementById("rating-summary").innerHTML = `<h2>${average}/5 average</h2><p class="text-muted">${state.reviews.length} review(s) received</p>`;
+  document.getElementById("reviews-received").innerHTML = state.reviews.map(r => `
+    <div class="glass-card">
+      <div class="review-stars">${TalentStageStore.stars(r.rating)}</div>
+      <p class="mt-1">"${r.text}"</p>
+      <p class="text-sm text-muted">${r.client}${r.project ? ` · ${r.project}` : ""}</p>
+    </div>`).join("");
+}
+document.addEventListener("DOMContentLoaded", () => {
+  renderReviews();
+  document.getElementById("review-form").addEventListener("submit", event => {
+    event.preventDefault();
+    const form = event.currentTarget;
+    const state = TalentStageStore.get();
+    state.reviews.unshift({
+      client: form.client.value.trim(),
+      project: form.project.value.trim(),
+      rating: Number(form.rating.value),
+      text: form.text.value.trim(),
+      date: new Date().toISOString().slice(0, 10),
+    });
+    TalentStageStore.save(state);
+    form.reset();
+    renderReviews();
+    showToast("Review added");
+  });
+});
+</script>
+{% endblock %}

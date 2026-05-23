@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block extra_css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}"><link rel="stylesheet" href="{{ url_for('static', filename='css/explore.css') }}">{% endblock %}
+{% block content %}
+<div class="dashboard-layout">
+  {% include 'partials/sidebar.html' %}
+  <main class="dashboard-main">
+    <h1>Saved Freelancers</h1>
+    <p class="text-muted">Bookmark profiles for future projects.</p>
+    <div class="grid grid-3 mt-2" id="saved-list"></div>
+  </main>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  document.getElementById("saved-list").innerHTML = MOCK_DATA.freelancers.slice(0, 4).map(t => `
+    <a href="/talent/${t.id}" class="glass-card talent-card">
+      <div class="card-header"><div class="avatar">${t.avatar}</div><div><h4>${t.name}</h4><p class="text-sm text-muted">${t.title}</p></div></div>
+      <button class="btn btn-sm btn-ghost mt-2" onclick="event.preventDefault();showToast('Removed from saved')">Remove</button>
+    </a>`).join("");
+});
+</script>
+{% endblock %}

@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block extra_css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/community.css') }}">{% endblock %}
+{% block content %}
+<section class="section container">
+  <h1 class="section-title">Mentorship</h1>
+  <p class="section-subtitle">Book sessions with experienced freelancers — paid or free.</p>
+  <div class="grid grid-3" id="mentors-grid"></div>
+</section>
+{% endblock %}
+{% block extra_js %}
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  document.getElementById("mentors-grid").innerHTML = MOCK_DATA.mentors.map(m => `
+    <div class="glass-card mentor-card">
+      <h3>${m.name}</h3>
+      <p class="text-muted text-sm">${m.expertise}</p>
+      <p class="session-price mt-2">${m.type === 'Free' ? 'Free' : '$' + m.rate + '/session'}</p>
+      <p class="text-xs text-muted">${m.sessions} sessions completed</p>
+      <button class="btn btn-primary btn-sm mt-2" onclick="showToast('Session booked (demo)')">Book Session</button>
+    </div>`).join("");
+});
+</script>
+{% endblock %}

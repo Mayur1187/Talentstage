@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+{% endblock %}
+{% block content %}
+<div class="dashboard-layout">
+  {% include 'partials/sidebar.html' %}
+  <main class="dashboard-main container">
+    <div class="page-header"><h1>Identity Verification</h1><p class="text-muted">Build trust with clients and freelancers</p></div>
+    <div class="stepper">
+      <div class="step active">1. Method</div>
+      <div class="step">2. Upload</div>
+      <div class="step">3. Review</div>
+    </div>
+    <div class="glass-card">
+      <div data-tabs>
+        <div class="tabs">
+          <button class="tab active" type="button">Student ID</button>
+          <button class="tab" type="button">LinkedIn URL</button>
+        </div>
+        <div class="tab-panel active">
+          <div class="dropzone" id="id-dropzone">Drop your student ID image here or click to browse</div>
+        </div>
+        <div class="tab-panel">
+          <div class="form-group"><label>LinkedIn profile URL</label><input type="url" placeholder="https://linkedin.com/in/yourprofile"></div>
+        </div>
+      </div>
+      <button class="btn btn-primary mt-2" onclick="showToast('Verification submitted for review (demo)')">Submit for Review</button>
+    </div>
+  </main>
+</div>
+{% endblock %}
+{% block extra_js %}<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>{% endblock %}

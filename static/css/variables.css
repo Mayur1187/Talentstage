@@ -1,0 +1,28 @@
+:root {
+  --primary: #7C3AED;
+  --primary-light: #9F67FF;
+  --neon-blue: #00D4FF;
+  --accent-pink: #FF4D9D;
+  --accent-cyan: #22D3EE;
+  --bg-deep: #0a0e1a;
+  --bg-navy: #0f1629;
+  --bg-card: rgba(15, 22, 41, 0.75);
+  --glass: rgba(255, 255, 255, 0.06);
+  --glass-border: rgba(255, 255, 255, 0.12);
+  --text-primary: #f1f5f9;
+  --text-muted: #94a3b8;
+  --text-dim: #64748b;
+  --success: #34d399;
+  --warning: #fbbf24;
+  --danger: #f87171;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+  --shadow-glow: 0 0 40px rgba(124, 58, 237, 0.25);
+  --shadow-neon: 0 0 30px rgba(0, 212, 255, 0.2);
+  --font-main: 'Poppins', 'Inter', system-ui, sans-serif;
+  --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  --sidebar-width: 260px;
+  --navbar-height: 72px;
+}

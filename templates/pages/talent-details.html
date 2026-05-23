@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/profile.css') }}">
+{% endblock %}
+{% block content %}
+<section class="section container" data-talent-id="{{ talent_id }}">
+  <div class="profile-header reveal">
+    <div class="avatar avatar-lg" id="profile-avatar">PS</div>
+    <div class="profile-info">
+      <h1 id="profile-name">Loading...</h1>
+      <p class="text-muted" id="profile-title"></p>
+      <div id="profile-skills" class="mt-1"></div>
+      <div class="profile-actions">
+        <a href="/messages" class="btn btn-primary">Message</a>
+        <button class="btn btn-secondary" onclick="showToast('Freelancer saved')">Save</button>
+        <a href="/client/post-project" class="btn btn-ghost">Hire</a>
+      </div>
+    </div>
+    <div class="completeness-ring" style="--pct:92%" data-pct="92%"></div>
+  </div>
+  <h2 class="section-title mt-3">Portfolio</h2>
+  <div class="portfolio-grid" id="portfolio-grid"></div>
+  <h2 class="section-title mt-3">Reviews</h2>
+  <div class="grid grid-2" id="reviews-list"></div>
+</section>
+{% endblock %}
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/profile.js') }}"></script>
+<script>
+document.body.dataset.talentId = "{{ talent_id }}";
+document.addEventListener("DOMContentLoaded", () => {
+  const el = document.getElementById("reviews-list");
+  if (el) el.innerHTML = MOCK_DATA.reviews.map(r => `
+    <div class="glass-card"><div class="review-stars">${"★".repeat(r.rating)}</div><p class="mt-1">"${r.text}"</p><p class="text-sm text-muted mt-1">${r.client} · ${r.date}</p></div>`).join("");
+});
+</script>
+{% endblock %}

@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block extra_css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}"><link rel="stylesheet" href="{{ url_for('static', filename='css/ai-panels.css') }}">{% endblock %}
+{% block content %}
+<div class="dashboard-layout">
+  {% include 'partials/sidebar.html' %}
+  <main class="dashboard-main">
+    <h1>Post a Project</h1>
+    <div class="ai-panel" data-ai-panel="scope">
+      <h3>Project Scoping Assistant</h3>
+      <p class="text-sm text-muted mb-2">Describe your need in plain language — AI generates a structured brief.</p>
+      <textarea id="vague-brief" placeholder="I need a dashboard redesign for our analytics SaaS..."></textarea>
+      <button class="btn btn-primary mt-2" id="btn-scope-ai">Generate Brief</button>
+      <div class="ai-loading hidden"><div class="loader"></div></div>
+      <div class="ai-result hidden mt-2" data-ai-panel="scope"></div>
+    </div>
+    <form id="project-form" class="glass-card mt-3" style="max-width:640px" onsubmit="event.preventDefault();showToast('Project posted!');location.href='/client/dashboard'">
+      <div class="form-group"><label>Title</label><input name="title" required></div>
+      <div class="form-group"><label>Description</label><textarea name="description" required></textarea></div>
+      <div class="form-group"><label>Required skills</label><input placeholder="Figma, React"></div>
+      <div class="form-group"><label>Budget range ($)</label><input placeholder="2500 - 4500"></div>
+      <div class="form-group"><label>Deadline</label><input type="date"></div>
+      <div class="form-group"><label>Project type</label><select><option>Fixed</option><option>Hourly</option></select></div>
+      <button class="btn btn-primary">Publish Project</button>
+    </form>
+  </main>
+</div>
+{% endblock %}
+{% block extra_js %}<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script><script src="{{ url_for('static', filename='js/recruiter.js') }}"></script>{% endblock %}

@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block extra_css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">{% endblock %}
+{% block content %}
+<div class="dashboard-layout">
+  {% include 'partials/sidebar.html' %}
+  <main class="dashboard-main">
+    <h1>Submit Proposal</h1>
+    <div id="project-summary" class="glass-card mt-2" style="max-width:720px"></div>
+    <form id="proposal-form" class="glass-card mt-2" style="max-width:720px">
+      <div class="form-group"><label>Bid amount ($)</label><input name="bid" type="number" value="3800" required></div>
+      <div class="form-group"><label>Timeline</label><input name="timeline" value="5 weeks" required></div>
+      <div class="form-group"><label>Cover message</label><textarea name="message" rows="5" required>I've delivered similar marketplace features with clean UI, reusable components, and demo-ready polish.</textarea></div>
+      <button class="btn btn-primary">Submit Proposal</button>
+      <a href="/proposals" class="btn btn-ghost">Back to Projects</a>
+    </form>
+  </main>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const projectId = Number("{{ project_id }}");
+  const state = TalentStageStore.get();
+  const project = state.projects.find(item => item.id === projectId) || state.projects[0];
+  document.getElementById("project-summary").innerHTML = `
+    <h2>${project.title}</h2>
+    <p class="text-muted">${project.client} · ${project.type} · ${TalentStageStore.money(project.budgetMin)}-${TalentStageStore.money(project.budgetMax)}</p>
+    <p>${project.skills.map(skill => `<span class="tag">${skill}</span>`).join("")}</p>`;
+  document.getElementById("proposal-form").addEventListener("submit", event => {
+    event.preventDefault();
+    const form = event.currentTarget;
+    state.proposals.push({
+      id: Date.now(),
+      projectId,
+      projectTitle: project.title,
+      freelancer: state.currentUser.name,
+      bid: Number(form.bid.value),
+      timeline: form.timeline.value.trim(),
+      message: form.message.value.trim(),
+      status: "Submitted",
+      createdAt: new Date().toISOString(),
+    });
+    TalentStageStore.save(state);
+    showToast("Proposal submitted");
+    setTimeout(() => location.href = "/proposals", 500);
+  });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block extra_css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}"><link rel="stylesheet" href="{{ url_for('static', filename='css/ai-panels.css') }}"><link rel="stylesheet" href="{{ url_for('static', filename='css/recruiter.css') }}">{% endblock %}
+{% block content %}
+<div class="dashboard-layout">
+  {% include 'partials/sidebar.html' %}
+  <main class="dashboard-main">
+    <h1>Proposals</h1>
+    <p class="text-muted">AI scores each proposal on relevance, clarity & value for money.</p>
+    <div class="ai-panel" data-ai-panel="evaluate">
+      <button class="btn btn-primary" onclick="runAI('evaluate', {projectId: {{ project_id }}})">Run AI Evaluator</button>
+      <div class="ai-loading hidden"><div class="loader"></div></div>
+      <div class="ai-result hidden mt-2"></div>
+    </div>
+    <div class="mt-3" id="proposal-cards"></div>
+  </main>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  document.getElementById("proposal-cards").innerHTML = MOCK_DATA.proposals.map(p => `
+    <div class="glass-card proposal-card mb-2 ${p.recommended ? 'recommended' : ''}">
+      <h4>${p.freelancer}</h4>
+      <p>Bid: $${p.bid} · ${p.timeline}</p>
+      <p class="text-sm text-muted mt-1">${p.message}</p>
+      <button class="btn btn-sm btn-primary mt-2" onclick="showToast('Freelancer hired!')">Hire</button>
+      <button class="btn btn-sm btn-ghost mt-2">Message</button>
+    </div>`).join("");
+  runAI("evaluate", { projectId: {{ project_id }} });
+});
+</script>
+{% endblock %}

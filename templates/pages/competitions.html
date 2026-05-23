@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block extra_css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/competitions.css') }}">{% endblock %}
+{% block content %}
+<section class="section container">
+  <h1 class="section-title">Skill Challenges</h1>
+  <p class="section-subtitle">Weekly community challenges — top submissions get featured.</p>
+  <div class="grid grid-3" id="challenges-grid"></div>
+</section>
+{% endblock %}
+{% block extra_js %}<script src="{{ url_for('static', filename='js/competitions.js') }}"></script>{% endblock %}

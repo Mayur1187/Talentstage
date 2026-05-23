@@ -1,0 +1,44 @@
+.auth-page {
+  min-height: calc(100vh - var(--navbar-height));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.auth-card {
+  width: min(440px, 100%);
+  padding: 2.5rem;
+}
+
+.auth-card h1 { text-align: center; margin-bottom: 0.5rem; }
+.auth-card .subtitle { text-align: center; color: var(--text-muted); margin-bottom: 2rem; }
+
+.role-picker {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.role-option {
+  padding: 1rem;
+  text-align: center;
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition);
+  background: transparent;
+  color: var(--text-muted);
+  font-family: inherit;
+}
+
+.role-option.selected {
+  border-color: var(--primary);
+  background: rgba(124, 58, 237, 0.2);
+  color: var(--text-primary);
+}
+
+.auth-divider { text-align: center; margin: 1.5rem 0; color: var(--text-dim); font-size: 0.85rem; }
+
+.auth-footer { text-align: center; margin-top: 1.5rem; font-size: 0.9rem; color: var(--text-muted); }

@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block extra_css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/community.css') }}"><link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">{% endblock %}
+{% block content %}
+<div class="dashboard-layout">
+  {% include 'partials/sidebar.html' %}
+  <main class="dashboard-main">
+    <h1>Notifications</h1>
+    <div class="glass-card mt-2" id="notif-list"></div>
+  </main>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  document.getElementById("notif-list").innerHTML = MOCK_DATA.notifications.map(n => `
+    <div class="notification-item ${n.unread ? 'unread' : ''}"><div>🔔</div><div><p>${n.text}</p><p class="text-xs text-muted">${n.time}</p></div></div>`).join("");
+});
+</script>
+{% endblock %}

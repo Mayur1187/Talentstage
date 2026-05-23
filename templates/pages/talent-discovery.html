@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block extra_css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}"><link rel="stylesheet" href="{{ url_for('static', filename='css/ai-panels.css') }}">{% endblock %}
+{% block content %}
+<div class="dashboard-layout">
+  {% include 'partials/sidebar.html' %}
+  <main class="dashboard-main">
+    <h1>Smart Freelancer Match</h1>
+    <p class="text-muted">AI ranks top 5 freelancers by skills, portfolio, rating & budget fit.</p>
+    <div class="ai-panel" data-ai-panel="match">
+      <div class="form-group"><label>Project skills needed</label><input id="match-skills" value="Figma, React"></div>
+      <button class="btn btn-primary" onclick="runAI('match', {skills: document.getElementById('match-skills').value})">Find Matches</button>
+      <div class="ai-loading hidden"><div class="loader"></div></div>
+      <div class="ai-result hidden mt-2"></div>
+    </div>
+  </main>
+</div>
+{% endblock %}
+{% block extra_js %}<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>{% endblock %}
