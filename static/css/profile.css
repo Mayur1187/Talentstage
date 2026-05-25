@@ -20,7 +20,7 @@
   content: '';
   position: absolute;
   top: 0; left: 0; right: 0; height: 100%;
-  background: linear-gradient(135deg, rgba(139, 92, 246, 0.15), rgba(6, 182, 212, 0.05));
+  background: linear-gradient(135deg, var(--role-bg-subtle), rgba(6, 182, 212, 0.05));
   z-index: 0;
   pointer-events: none;
 }
@@ -79,7 +79,7 @@
 
 .portfolio-item .thumb {
   height: 200px;
-  background: linear-gradient(135deg, var(--bg-navy), rgba(139, 92, 246, 0.2));
+  background: linear-gradient(135deg, var(--bg-navy), var(--role-bg-subtle));
   margin: -1.5rem -1.5rem 1.5rem -1.5rem; /* Break out of glass-card padding */
   display: flex;
   align-items: center;
@@ -138,9 +138,9 @@
 .tag {
   display: inline-block;
   padding: 0.25rem 0.75rem;
-  background: rgba(139, 92, 246, 0.15);
+  background: var(--role-bg-subtle);
   color: var(--primary-light);
-  border: 1px solid rgba(139, 92, 246, 0.3);
+  border: 1px solid var(--role-border);
   border-radius: 99px;
   font-size: 0.85rem;
   margin-right: 0.5rem;
@@ -151,5 +151,5 @@
 .tag:hover {
   background: var(--primary);
   color: white;
-  box-shadow: 0 0 15px rgba(139, 92, 246, 0.4);
+  box-shadow: var(--shadow-glow);
 }

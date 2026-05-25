@@ -1,4 +1,9 @@
 document.addEventListener("DOMContentLoaded", () => {
+  /* ---- Apply role class to body for CSS scoping ---- */
+  const currentRole = localStorage.getItem("talentstage_role") || "freelancer";
+  document.body.classList.remove("role-freelancer", "role-client", "role-both");
+  document.body.classList.add("role-" + currentRole);
+
   /* ---- Scroll-reveal ---- */
   document.querySelectorAll(".reveal").forEach((el, i) => {
     setTimeout(() => el.classList.add("visible"), 80 * i);

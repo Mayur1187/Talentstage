@@ -1,24 +1,24 @@
 :root {
   /* Core brand colors */
-  --primary: #8B5CF6;
+  --primary: #3B82F6;
   --primary-light: #A78BFA;
-  --primary-dark: #6D28D9;
+  --primary-dark: #2563EB;
   
   --neon-blue: #06B6D4;
   --accent-pink: #EC4899;
   --accent-cyan: #22D3EE;
   
-  /* Deep, rich dark mode backgrounds */
-  --bg-deep: #030712;
-  --bg-navy: #0F172A;
-  --bg-card: rgba(15, 23, 42, 0.75);
-  --bg-card-hover: rgba(30, 41, 59, 0.85);
+  /* Deep, rich dark mode backgrounds (Midnight Trust Theme) */
+  --bg-deep: #020617; /* Very dark slate */
+  --bg-navy: #0F172A; /* Base navy */
+  --bg-card: rgba(30, 41, 59, 0.75); /* Slate 800 */
+  --bg-card-hover: rgba(51, 65, 85, 0.85); /* Slate 700 */
   
   /* Glassmorphism settings */
-  --glass: rgba(255, 255, 255, 0.04);
-  --glass-hover: rgba(255, 255, 255, 0.08);
-  --glass-border: rgba(255, 255, 255, 0.1);
-  --glass-border-highlight: rgba(255, 255, 255, 0.2);
+  --glass: rgba(255, 255, 255, 0.03);
+  --glass-hover: rgba(255, 255, 255, 0.06);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-border-highlight: rgba(255, 255, 255, 0.15);
   
   /* Text */
   --text-primary: #F8FAFC;
@@ -37,7 +37,7 @@
   --radius-xl: 24px;
   
   /* Shadows & Glows */
-  --shadow-glow: 0 0 30px rgba(139, 92, 246, 0.25);
+  --shadow-glow: 0 0 30px rgba(59, 130, 246, 0.25); /* Default to Electric Blue */
   --shadow-neon: 0 0 30px rgba(6, 182, 212, 0.2);
   --shadow-card: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
   --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
@@ -53,4 +53,44 @@
   /* Layout */
   --sidebar-width: 280px;
   --navbar-height: 76px;
+
+  /* Default role accent (freelancer - Electric Blue) */
+  --role-accent: #3B82F6;
+  --role-accent-light: #60A5FA;
+  --role-accent-dark: #2563EB;
+  --role-glow: 0 0 30px rgba(59, 130, 246, 0.25);
+  --role-gradient: linear-gradient(135deg, #3B82F6, #60A5FA);
+  --role-bg-subtle: rgba(59, 130, 246, 0.08);
+  --role-border: rgba(59, 130, 246, 0.25);
+}
+
+/* ---- Role-scoped overrides ---- */
+body.role-freelancer {
+  --role-accent: #3B82F6;
+  --role-accent-light: #60A5FA;
+  --role-accent-dark: #2563EB;
+  --role-glow: 0 0 30px rgba(59, 130, 246, 0.25);
+  --role-gradient: linear-gradient(135deg, #3B82F6, #60A5FA);
+  --role-bg-subtle: rgba(59, 130, 246, 0.08);
+  --role-border: rgba(59, 130, 246, 0.25);
+}
+
+body.role-client {
+  --role-accent: #06B6D4;
+  --role-accent-light: #22D3EE;
+  --role-accent-dark: #0891B2;
+  --role-glow: 0 0 30px rgba(6, 182, 212, 0.25);
+  --role-gradient: linear-gradient(135deg, #06B6D4, #22D3EE);
+  --role-bg-subtle: rgba(6, 182, 212, 0.08);
+  --role-border: rgba(6, 182, 212, 0.25);
+}
+
+body.role-both {
+  --role-accent: #10B981;
+  --role-accent-light: #34D399;
+  --role-accent-dark: #059669;
+  --role-glow: 0 0 30px rgba(16, 185, 129, 0.25);
+  --role-gradient: linear-gradient(135deg, #10B981, #34D399);
+  --role-bg-subtle: rgba(16, 185, 129, 0.08);
+  --role-border: rgba(16, 185, 129, 0.25);
 }

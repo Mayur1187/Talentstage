@@ -4,17 +4,70 @@
   <ul class="navbar-nav">
     <li><a href="/explore">Explore</a></li>
     <li><a href="/competitions">Challenges</a></li>
-    <li><a href="/community">Community</a></li>
-    <li><a href="/proposals">Projects</a></li>
-    <li><a href="/messages">Messages</a></li>
+    <li class="nav-auth-only"><a href="/community">Community</a></li>
+    <li class="nav-auth-only nav-role-freelancer"><a href="/proposals">Browse Projects</a></li>
+    <li class="nav-auth-only nav-role-client"><a href="/client/active-projects">My Projects</a></li>
+    <li class="nav-auth-only"><a href="/messages">Messages</a></li>
   </ul>
   <div class="navbar-actions">
-    <a href="/notifications" class="btn btn-ghost btn-sm" title="Notifications">🔔</a>
-    <div class="nav-completeness-mini" id="navCompleteness" style="--pct:0%" data-pct="" title="Profile Completeness">
+    <!-- Shown when logged out -->
+    <div class="nav-guest-only">
+      <a href="/login" class="btn btn-ghost btn-sm">Log In</a>
+      <a href="/signup" class="btn btn-primary btn-sm">Sign Up</a>
     </div>
-    <a href="/profile" class="nav-profile">
-      <div class="nav-avatar" id="navAvatar">AM</div>
-      <span class="nav-verify-dot none" id="navVerifyDot" title="Not Verified"></span>
-    </a>
+    <!-- Shown when logged in -->
+    <div class="nav-auth-only" style="display:flex;align-items:center;gap:0.5rem;">
+      <a id="navDashLink" href="/dashboard" class="btn btn-ghost btn-sm" title="Dashboard">📊</a>
+      <a href="/notifications" class="btn btn-ghost btn-sm" title="Notifications">🔔</a>
+      <div class="nav-completeness-mini nav-role-freelancer" id="navCompleteness" style="--pct:0%" data-pct="" title="Profile Completeness">
+      </div>
+      <a href="/profile" class="nav-profile">
+        <div class="nav-avatar" id="navAvatar">AM</div>
+        <span class="nav-verify-dot none" id="navVerifyDot" title="Not Verified"></span>
+      </a>
+      <span class="nav-role-badge" id="navRoleBadge"></span>
+      <button class="btn btn-ghost btn-sm" onclick="logoutTalentStage()" title="Log out">↪</button>
+    </div>
   </div>
 </nav>
+<script>
+(function() {
+  const isLoggedIn = localStorage.getItem("talentstage_logged_in") === "true";
+  const role = localStorage.getItem("talentstage_role") || "freelancer";
+
+  // Apply role class to body for global CSS scoping
+  document.body.classList.remove("role-freelancer", "role-client", "role-both");
+  document.body.classList.add("role-" + role);
+
+  
+  document.querySelectorAll(".nav-auth-only").forEach(el => {
+    el.style.display = isLoggedIn ? "" : "none";
+  });
+  document.querySelectorAll(".nav-guest-only").forEach(el => {
+    el.style.display = isLoggedIn ? "none" : "";
+  });
+  
+  // Role-specific nav items
+  if (isLoggedIn) {
+    document.querySelectorAll(".nav-role-freelancer").forEach(el => {
+      el.style.display = (role === "freelancer" || role === "both") ? "" : "none";
+    });
+    document.querySelectorAll(".nav-role-client").forEach(el => {
+      el.style.display = (role === "client" || role === "both") ? "" : "none";
+    });
+    // Dashboard link
+    const dashLink = document.getElementById("navDashLink");
+    if (dashLink) {
+      dashLink.href = role === "client" ? "/client/dashboard" : "/dashboard";
+    }
+    // Role badge
+    const badge = document.getElementById("navRoleBadge");
+    if (badge) {
+      const labels = { freelancer: "Freelancer", client: "Client", both: "Both" };
+      const colors = { freelancer: "#8b5cf6", client: "#06b6d4", both: "#10b981" };
+      badge.textContent = labels[role] || "Both";
+      badge.style.cssText = `font-size:0.65rem;padding:2px 8px;border-radius:1rem;font-weight:700;letter-spacing:0.5px;background:${colors[role] || colors.both}22;color:${colors[role] || colors.both};border:1px solid ${colors[role] || colors.both}44;`;
+    }
+  }
+})();
+</script>

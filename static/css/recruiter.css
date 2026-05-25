@@ -1,32 +1,64 @@
-/* recruiter.css / project & proposals cards */
+/* ===== Client/Recruiter Layout — Role-Adaptive Styles ===== */
+
 .project-card {
   display: flex;
   flex-direction: column;
   height: 100%;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
 }
-.project-card h3 { font-family: var(--font-heading); margin-bottom: 0.25rem; }
-.project-card .budget { color: var(--success); font-weight: 700; font-size: 1.1rem; margin: 0.5rem 0; }
-.project-card .deadline { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem; flex: 1; }
 
-.proposal-card { position: relative; overflow: hidden; }
+.project-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--role-glow);
+  border-color: var(--role-border);
+}
+
+.project-card h4 {
+  font-family: var(--font-heading);
+}
+
+.project-card .budget {
+  color: var(--role-accent-light);
+  font-weight: 700;
+  font-size: 1.1rem;
+  margin: 0.5rem 0;
+}
+
+.project-card .deadline {
+  font-size: 0.85rem;
+  margin-bottom: 1rem;
+  flex: 1;
+}
+
+/* ---- Proposal Card ---- */
+.proposal-card {
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.proposal-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--role-glow);
+  border-color: var(--role-border);
+}
+
 .proposal-card.recommended {
   border-color: var(--accent-pink);
-  box-shadow: 0 0 15px rgba(255, 77, 157, 0.2);
-}
-.proposal-card.recommended::before {
-  content: '✨ AI Recommended';
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  background: linear-gradient(135deg, var(--accent-pink), #D946EF);
-  color: white;
-  padding: 0.25rem 0.75rem;
-  border-radius: 99px;
-  font-size: 0.75rem;
-  font-weight: 700;
-  box-shadow: 0 4px 10px rgba(255, 77, 157, 0.4);
+  box-shadow: 0 0 15px rgba(236, 72, 153, 0.15);
 }
 
+.proposal-card.recommended::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(135deg, var(--accent-pink), #D946EF);
+}
+
+/* ---- Inbox Badge ---- */
 .inbox-badge {
   background: linear-gradient(135deg, var(--accent-pink), #D946EF);
   color: white;
@@ -35,5 +67,5 @@
   padding: 0.15rem 0.5rem;
   border-radius: 99px;
   margin-left: 0.5rem;
-  box-shadow: 0 0 8px rgba(255, 77, 157, 0.4);
+  box-shadow: 0 0 8px rgba(236, 72, 153, 0.4);
 }

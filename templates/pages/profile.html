@@ -18,36 +18,45 @@
         </div>
         <p class="text-muted" id="profile-title"></p>
         <p class="mt-1" id="profile-badges"></p>
-        <div class="profile-actions">
+        <div class="profile-actions" id="profile-actions">
           <a href="/profile/edit" class="btn btn-primary">Edit Profile</a>
-          <a href="/upload" class="btn btn-secondary">Add Portfolio Project</a>
-          <a href="/portfolio-reviewer" class="btn btn-secondary">AI Portfolio Review</a>
+          <!-- Dynamic actions will be injected here -->
         </div>
       </div>
-      <div class="completeness-ring" id="profile-completeness" style="--pct:78%" data-pct="78%"></div>
+      <div class="completeness-ring" id="profile-completeness" style="--pct:0%" data-pct="0%"></div>
     </div>
 
     <!-- Completeness Progress Bar -->
     <div class="profile-completeness-bar glass-card" id="profileCompletenessBar">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;">
         <span class="text-sm" style="font-weight:600;">Profile Completeness</span>
-        <span class="text-sm" id="profilePctText" style="color:var(--primary-light);font-weight:700;">78%</span>
+        <span class="text-sm" id="profilePctText" style="color:var(--role-accent-light);font-weight:700;">0%</span>
       </div>
-      <div class="progress-bar"><span id="profileProgressFill" style="width:78%"></span></div>
+      <div class="progress-bar"><span id="profileProgressFill" style="width:0%"></span></div>
     </div>
 
-    <h2 class="mt-3">Bio</h2>
+    <h2 class="mt-3">About</h2>
     <p class="text-muted glass-card" id="profile-bio"></p>
-    <div class="grid grid-2 mt-3">
+    
+    <div class="grid grid-2 mt-3" id="freelancer-stats-grid">
       <div class="glass-card"><h3>Skills</h3><div id="profile-skills" class="mt-1"></div></div>
       <div class="glass-card"><h3>Rate & Availability</h3><p id="profile-rate" class="text-muted mt-1"></p></div>
     </div>
-    <h2 class="mt-3">Portfolio</h2>
-    <div class="portfolio-grid" id="portfolio-grid"></div>
-    <h2 class="mt-3">Education</h2>
-    <p class="glass-card text-muted" id="profile-education"></p>
-    <h2 class="mt-3">Experience</h2>
-    <div class="timeline glass-card" id="profile-experience"></div>
+    
+    <div class="grid grid-2 mt-3" id="client-stats-grid" style="display: none;">
+      <div class="glass-card"><h3>Projects Posted</h3><div class="mt-1" id="client-profile-jobs" style="font-size: 1.5rem; font-weight: 700; color: var(--role-accent-light);">0</div></div>
+      <div class="glass-card"><h3>Total Spent</h3><p class="mt-1" id="client-profile-spent" style="font-size: 1.5rem; font-weight: 700; color: var(--role-accent-light);">$0</p></div>
+    </div>
+
+    <div id="freelancer-sections">
+      <h2 class="mt-3">Portfolio</h2>
+      <div class="portfolio-grid" id="portfolio-grid"></div>
+      <h2 class="mt-3">Education</h2>
+      <p class="glass-card text-muted" id="profile-education"></p>
+      <h2 class="mt-3">Experience</h2>
+      <div class="timeline glass-card" id="profile-experience"></div>
+    </div>
+
   </main>
 </div>
 {% endblock %}
@@ -57,16 +66,19 @@
 document.addEventListener("DOMContentLoaded", () => {
   const state = TalentStageStore.get();
   const user = state.currentUser;
+  const role = user.role || localStorage.getItem('talentstage_role') || 'freelancer';
 
   document.getElementById("profile-avatar").textContent = user.name.split(" ").map(p => p[0]).join("").slice(0, 2);
   document.getElementById("profile-name").textContent = user.name;
-  document.getElementById("profile-title").textContent = `${user.title} · ${TalentStageStore.money(user.hourlyRate)}/hr · ${user.availability}`;
-  document.getElementById("profile-badges").innerHTML = (user.badges || []).map(b => `<span class="badge badge-verified">${b}</span>`).join(" ") + ` <span class="badge">${user.availability}</span>`;
+  
+  if (role !== 'client') {
+    document.getElementById("profile-title").textContent = `${user.title} · ${TalentStageStore.money(user.hourlyRate)}/hr · ${user.availability}`;
+    document.getElementById("profile-badges").innerHTML = (user.badges || []).map(b => `<span class="badge badge-verified">${b}</span>`).join(" ") + ` <span class="badge">${user.availability}</span>`;
+  }
 
   // Role badge
   const roleBadge = document.getElementById('profile-role-badge');
   const roleLabels = { freelancer: '💼 Freelancer', client: '🏢 Client', both: '🚀 Both' };
-  const role = user.role || localStorage.getItem('talentstage_role') || 'freelancer';
   roleBadge.innerHTML = roleLabels[role] || '💼 Freelancer';
   roleBadge.className = 'badge badge-ai';
 
@@ -84,30 +96,73 @@ document.addEventListener("DOMContentLoaded", () => {
     verifyBadge.className = 'badge';
   }
 
-  // Completeness
-  const pct = TalentStageStore.computeCompleteness ? TalentStageStore.computeCompleteness() : (user.completeness || 0);
-  document.getElementById("profile-completeness").style.setProperty("--pct", `${pct}%`);
-  document.getElementById("profile-completeness").dataset.pct = `${pct}%`;
-  document.getElementById("profilePctText").textContent = `${pct}%`;
-  document.getElementById("profileProgressFill").style.width = `${pct}%`;
+  // Adaptive actions
+  const actionsEl = document.getElementById('profile-actions');
+  if (role === 'client') {
+    actionsEl.innerHTML = `
+      <a href="/profile/edit" class="btn btn-primary">Edit Profile</a>
+      <a href="/client/post-project" class="btn btn-secondary">Post a Project</a>
+    `;
+  } else {
+    actionsEl.innerHTML = `
+      <a href="/profile/edit" class="btn btn-primary">Edit Profile</a>
+      <a href="/upload" class="btn btn-secondary">Add Portfolio Project</a>
+      <a href="/portfolio-reviewer" class="btn btn-secondary">AI Portfolio Review</a>
+    `;
+  }
 
-  document.getElementById("profile-bio").textContent = user.bio;
-  document.getElementById("profile-skills").innerHTML = user.skills.map(s => `<span class="tag">${s}</span>`).join("");
-  document.getElementById("profile-rate").textContent = `${TalentStageStore.money(user.hourlyRate)} hourly · ${user.availability}`;
-  document.getElementById("profile-education").textContent = user.education;
-  document.getElementById("profile-experience").innerHTML = user.experience.split("\\n").map(item => `<div class="timeline-item">${item}</div>`).join("");
-  document.getElementById("portfolio-grid").innerHTML = state.portfolio.map(project => `
-    <div class="portfolio-item">
-      <div class="thumb" style="background-image: url('${project.image || ''}'); background-size: cover; background-position: center;">
-        ${!project.image ? project.category.slice(0, 2).toUpperCase() : ''}
-      </div>
-      <div style="padding: 1.5rem; flex: 1; display: flex; flex-direction: column;">
-        <h3 style="margin-bottom: 0.5rem; font-family: var(--font-heading);">${project.title}</h3>
-        <p class="text-muted text-sm" style="flex: 1; margin-bottom: 1rem;">${project.desc}</p>
-        <div style="margin-bottom: 1rem;">${project.tools.map(tool => `<span class="tag">${tool}</span>`).join("")}</div>
-        ${project.link ? `<a class="btn btn-sm btn-secondary" style="width: 100%; text-align: center;" href="${project.link}" target="_blank" rel="noreferrer">View Live Project</a>` : `<button class="btn btn-sm btn-ghost" style="width: 100%; text-align: center;" disabled>Private/Offline</button>`}
-      </div>
-    </div>`).join("");
+  // Adaptive Sections
+  if (role === 'client') {
+    document.getElementById('freelancer-stats-grid').style.display = 'none';
+    document.getElementById('freelancer-sections').style.display = 'none';
+    document.getElementById('profile-completeness').style.display = 'none';
+    document.getElementById('profileCompletenessBar').style.display = 'none';
+    document.getElementById('client-stats-grid').style.display = 'grid';
+    
+    document.getElementById('client-profile-jobs').textContent = user.clientJobsPosted || 0;
+    document.getElementById('client-profile-spent').textContent = user.clientTotalSpent || "$0";
+    
+    document.getElementById("profile-title").textContent = `Hiring Manager · ${user.clientIndustry || "Startup"}`;
+    document.getElementById("profile-badges").innerHTML = user.clientPaymentVerified 
+      ? `<span class="badge badge-verified">✅ Payment Verified</span>` 
+      : `<span class="badge" style="color:var(--text-muted);">❌ Payment Unverified</span>`;
+      
+    document.getElementById("profile-bio").textContent = "We are a fast-growing startup looking for top-tier creative talent to help us build amazing products.";
+  } else {
+    // Completeness
+    const pct = TalentStageStore.computeCompleteness ? TalentStageStore.computeCompleteness() : (user.completeness || 0);
+    const ring = document.getElementById("profile-completeness");
+    if (ring) {
+      ring.style.setProperty("--pct", `${pct}%`);
+      ring.dataset.pct = `${pct}%`;
+    }
+    const pctText = document.getElementById("profilePctText");
+    if (pctText) pctText.textContent = `${pct}%`;
+    const progressFill = document.getElementById("profileProgressFill");
+    if (progressFill) progressFill.style.width = `${pct}%`;
+
+    document.getElementById("profile-skills").innerHTML = user.skills.map(s => `<span class="tag">${s}</span>`).join("");
+    document.getElementById("profile-rate").textContent = `${TalentStageStore.money(user.hourlyRate)} hourly · ${user.availability}`;
+    document.getElementById("profile-education").textContent = user.education;
+    document.getElementById("profile-experience").innerHTML = user.experience.split("\\n").map(item => `<div class="timeline-item">${item}</div>`).join("");
+    document.getElementById("portfolio-grid").innerHTML = state.portfolio.map(project => `
+      <div class="portfolio-item">
+        <div class="thumb" style="background-image: url('${project.image || ''}'); background-size: cover; background-position: center;">
+          ${!project.image ? project.category.slice(0, 2).toUpperCase() : ''}
+        </div>
+        <div style="padding: 1.5rem; flex: 1; display: flex; flex-direction: column;">
+          <h3 style="margin-bottom: 0.5rem; font-family: var(--font-heading);">${project.title}</h3>
+          <p class="text-muted text-sm" style="flex: 1; margin-bottom: 1rem;">${project.desc}</p>
+          <div style="margin-bottom: 1rem;">${project.tools.map(tool => `<span class="tag">${tool}</span>`).join("")}</div>
+          ${project.link ? `<a class="btn btn-sm btn-secondary" style="width: 100%; text-align: center;" href="${project.link}" target="_blank" rel="noreferrer">View Live Project</a>` : `<button class="btn btn-sm btn-ghost" style="width: 100%; text-align: center;" disabled>Private/Offline</button>`}
+        </div>
+      </div>`).join("");
+  }
+  
+  // Bio for both
+  document.getElementById("profile-bio").textContent = role === 'client' 
+    ? "We are a fast-growing startup looking for top-tier creative talent to help us build amazing products." 
+    : user.bio;
 });
 </script>
 {% endblock %}

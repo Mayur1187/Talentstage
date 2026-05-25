@@ -1,12 +1,68 @@
 {% extends "base.html" %}
-{% block extra_css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}"><link rel="stylesheet" href="{{ url_for('static', filename='css/recruiter.css') }}">{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/recruiter.css') }}">
+<style>
+  .project-layout-grid {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: 2rem;
+    margin-top: 1.5rem;
+  }
+  @media (max-width: 900px) {
+    .project-layout-grid { grid-template-columns: 1fr; }
+  }
+  .client-sidebar {
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+  }
+  .client-sidebar h3 {
+    font-size: 1.1rem;
+    margin-bottom: 1.25rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--glass-border);
+  }
+  .client-meta-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+  .client-meta-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+  .client-meta-value {
+    font-weight: 600;
+    color: var(--text-primary);
+    font-size: 0.95rem;
+  }
+  .client-meta-label {
+    font-size: 0.8rem;
+    color: var(--text-dim);
+  }
+</style>
+{% endblock %}
 {% block content %}
 <div class="dashboard-layout">
   {% include 'partials/sidebar.html' %}
-  <main class="dashboard-main">
-    <div id="project-detail"></div>
-    <a href="/client/proposals/{{ project_id }}" class="btn btn-primary mt-2">View Proposals (AI Evaluated)</a>
-    <a href="/client/discover" class="btn btn-secondary mt-2">Smart Match Freelancers</a>
+  <main class="dashboard-main container">
+    <div class="project-layout-grid">
+      <!-- Main Content -->
+      <div class="main-column" id="project-main">
+        <!-- Rendered by JS -->
+      </div>
+      
+      <!-- Sidebar Content -->
+      <div class="sidebar-column">
+        <!-- Client details rendered by JS -->
+        <div class="client-sidebar" id="project-client-sidebar">
+        </div>
+      </div>
+    </div>
   </main>
 </div>
 {% endblock %}
@@ -14,13 +70,100 @@
 <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
 <script>
 document.addEventListener("DOMContentLoaded", () => {
+  const state = TalentStageStore.get();
   const p = getProject({{ project_id }});
-  document.getElementById("project-detail").innerHTML = `
-    <h1>${p.title}</h1>
-    <p class="text-muted">${p.client} · ${p.status}</p>
-    <p class="budget mt-2">$${p.budgetMin.toLocaleString()} – $${p.budgetMax.toLocaleString()} · ${p.type}</p>
-    <p>Deadline: ${p.deadline}</p>
-    <div class="mt-2">${p.skills.map(s => `<span class="tag">${s}</span>`).join("")}</div>`;
+  const c = MOCK_DATA.clients[p.client] || { rating: 0, reviews: 0, totalSpent: "$0", jobsPosted: 0, hireRate: "0%", location: "Unknown", memberSince: "N/A", paymentVerified: false, industry: "Unknown", badge: "" };
+  
+  // Render Main Content
+  document.getElementById("project-main").innerHTML = `
+    <div class="page-header" style="margin-bottom:2rem;">
+      <h1 style="font-size:2rem; margin-bottom:0.5rem; font-family:var(--font-heading);">${p.title}</h1>
+      <div style="display:flex; flex-wrap:wrap; gap:1rem; color:var(--text-muted); font-size:0.95rem;">
+        <span>Posted ${p.status === 'Open' ? 'Recently' : p.status}</span>
+        <span>·</span>
+        <span>📍 ${c.location}</span>
+      </div>
+    </div>
+    
+    <div class="glass-card mb-3">
+      <div style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:1rem; padding-bottom:1.5rem; border-bottom:1px solid var(--glass-border); margin-bottom:1.5rem;">
+        <div>
+          <div style="font-size:0.85rem; color:var(--text-dim); text-transform:uppercase; letter-spacing:1px; margin-bottom:0.25rem;">Budget</div>
+          <div style="font-size:1.5rem; font-weight:700; color:var(--text-primary);">$${p.budgetMin.toLocaleString()} – $${p.budgetMax.toLocaleString()}</div>
+          <div style="font-size:0.85rem; color:var(--text-muted);">${p.type}</div>
+        </div>
+        <div>
+          <div style="font-size:0.85rem; color:var(--text-dim); text-transform:uppercase; letter-spacing:1px; margin-bottom:0.25rem;">Deadline</div>
+          <div style="font-size:1.25rem; font-weight:600; color:var(--text-primary);">${p.deadline}</div>
+        </div>
+        <div>
+          <div style="font-size:0.85rem; color:var(--text-dim); text-transform:uppercase; letter-spacing:1px; margin-bottom:0.25rem;">Proposals</div>
+          <div style="font-size:1.25rem; font-weight:600; color:var(--text-primary);">${p.proposals} submitted</div>
+        </div>
+      </div>
+      
+      <h3 style="margin-bottom:1rem; font-size:1.1rem;">Project Description</h3>
+      <p style="color:var(--text-muted); line-height:1.6; margin-bottom:1.5rem;">
+        We are looking for an experienced professional to help us with ${p.title}. 
+        The ideal candidate will have strong expertise in the required skills and a proven track record of delivering high-quality work on time. 
+        Please review the budget and timeline before submitting your proposal. We are looking for immediate availability.
+      </p>
+      
+      <h3 style="margin-bottom:1rem; font-size:1.1rem;">Skills Required</h3>
+      <div style="display:flex; flex-wrap:wrap; gap:0.5rem; margin-bottom:2rem;">
+        ${p.skills.map(s => `<span class="tag">${s}</span>`).join("")}
+      </div>
+      
+      ${state.currentUser.role === 'client' ? `
+        <div style="display:flex; gap:1rem;">
+          <a href="/client/proposals/${p.id}" class="btn btn-primary">View Proposals (AI Evaluated)</a>
+          <a href="/client/discover" class="btn btn-secondary">Smart Match Freelancers</a>
+        </div>
+      ` : `
+        <a href="/proposals/submit/${p.id}" class="btn btn-primary" style="padding:1rem 2rem; font-size:1.1rem;">Submit a Proposal</a>
+      `}
+    </div>
+  `;
+
+  // Render Sidebar Content
+  document.getElementById("project-client-sidebar").innerHTML = `
+    <h3>About the Client</h3>
+    <div style="margin-bottom:1.5rem;">
+      <div style="font-weight:700; font-size:1.1rem; color:var(--text-primary); display:flex; align-items:center; gap:0.5rem;">
+        ${p.client} 
+        ${c.badge ? `<span class="badge" style="background:var(--role-bg-subtle); color:var(--role-accent-light); font-size:0.7rem;">${c.badge}</span>` : ''}
+      </div>
+      <div style="color:var(--text-muted); font-size:0.9rem; margin-top:0.25rem;">${c.industry}</div>
+    </div>
+    
+    <ul class="client-meta-list">
+      <li class="client-meta-item">
+        <span class="client-meta-value">⭐ ${c.rating} <span style="font-weight:400; color:var(--text-muted); font-size:0.85rem;">(${c.reviews} reviews)</span></span>
+        <span class="client-meta-label">Client Rating</span>
+      </li>
+      <li class="client-meta-item">
+        <span class="client-meta-value" style="color:${c.paymentVerified ? 'var(--role-accent-light)' : 'var(--text-muted)'};">
+          ${c.paymentVerified ? '✅ Payment method verified' : '❌ Payment unverified'}
+        </span>
+        <span class="client-meta-label">Verification</span>
+      </li>
+      <li class="client-meta-item">
+        <span class="client-meta-value">💰 ${c.totalSpent}</span>
+        <span class="client-meta-label">Total Spent</span>
+      </li>
+      <li class="client-meta-item">
+        <span class="client-meta-value">${c.jobsPosted} jobs posted</span>
+        <span class="client-meta-label">${c.hireRate} hire rate</span>
+      </li>
+      <li class="client-meta-item">
+        <span class="client-meta-value">📍 ${c.location}</span>
+        <span class="client-meta-label">Location</span>
+      </li>
+      <li class="client-meta-item">
+        <span class="client-meta-value">Member since ${c.memberSince}</span>
+      </li>
+    </ul>
+  `;
 });
 </script>
 {% endblock %}

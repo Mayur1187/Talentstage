@@ -1,3 +1,5 @@
+/* ===== Dashboard Layout — Role-Adaptive Styles ===== */
+
 .sidebar {
   background: rgba(10, 14, 26, 0.95);
   border-right: 1px solid var(--glass-border);
@@ -12,7 +14,7 @@
   padding: 0 1.25rem 1.5rem;
   font-weight: 800;
   font-size: 1.1rem;
-  background: linear-gradient(135deg, var(--primary-light), var(--neon-blue));
+  background: var(--role-gradient);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -33,7 +35,7 @@
 .sidebar-nav li a.active {
   color: var(--text-primary);
   background: var(--glass);
-  border-left-color: var(--primary);
+  border-left-color: var(--role-accent);
 }
 
 .sidebar-nav .nav-section {
@@ -53,16 +55,155 @@
   width: 48px;
   height: 48px;
   border-radius: 50%;
-  background: var(--primary);
+  background: var(--role-accent);
   border: none;
   color: white;
   font-size: 1.25rem;
   cursor: pointer;
-  box-shadow: var(--shadow-glow);
+  box-shadow: var(--role-glow);
 }
 
 .dashboard-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
 
+/* ---- Role-Themed Stat Cards ---- */
+.stat-card {
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--role-gradient);
+  opacity: 0.7;
+}
+
+.stat-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--role-glow);
+}
+
+.stat-card .stat-value {
+  background: var(--role-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ---- Welcome Banner ---- */
+.dash-welcome-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding: 1.75rem 2rem;
+  border-radius: var(--radius-lg);
+  background: var(--role-bg-subtle);
+  border: 1px solid var(--role-border);
+  margin-bottom: 2rem;
+  position: relative;
+  overflow: hidden;
+  flex-wrap: wrap;
+}
+
+.dash-welcome-banner::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -10%;
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  background: var(--role-accent);
+  opacity: 0.04;
+  filter: blur(40px);
+  pointer-events: none;
+}
+
+.dash-welcome-info h1 {
+  font-size: 1.5rem;
+  margin-bottom: 0.25rem;
+}
+
+.dash-welcome-info p {
+  color: var(--text-muted);
+  font-size: 0.92rem;
+}
+
+.dash-welcome-role {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.3rem 0.8rem;
+  border-radius: 99px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  background: var(--role-bg-subtle);
+  color: var(--role-accent-light);
+  border: 1px solid var(--role-border);
+  margin-top: 0.5rem;
+  letter-spacing: 0.3px;
+}
+
+.dash-welcome-actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+/* ---- Quick Links Panel ---- */
+.quick-links-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 2rem;
+}
+
+.quick-link-card {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 1.25rem;
+  border-radius: var(--radius-md);
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  color: var(--text-primary);
+  transition: all 0.3s ease;
+  text-decoration: none;
+}
+
+.quick-link-card:hover {
+  background: var(--glass-hover);
+  border-color: var(--role-border);
+  box-shadow: var(--role-glow);
+  transform: translateY(-2px);
+  color: var(--text-primary);
+}
+
+.quick-link-icon {
+  font-size: 1.4rem;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  background: var(--role-bg-subtle);
+  flex-shrink: 0;
+}
+
+.quick-link-text {
+  font-size: 0.88rem;
+  font-weight: 600;
+  font-family: var(--font-heading);
+}
+
+/* ---- Activity List ---- */
 .activity-list { list-style: none; }
 .activity-list li {
   display: flex;
@@ -71,18 +212,47 @@
   border-bottom: 1px solid var(--glass-border);
   align-items: flex-start;
 }
-
 .activity-list li:last-child { border-bottom: none; }
 
+/* ---- Nudge Banner ---- */
 .nudge-banner {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
   padding: 1rem 1.25rem;
-  background: linear-gradient(90deg, rgba(124, 58, 237, 0.15), transparent);
-  border: 1px solid rgba(124, 58, 237, 0.3);
+  background: linear-gradient(90deg, var(--role-bg-subtle), transparent);
+  border: 1px solid var(--role-border);
   border-radius: var(--radius-md);
   margin-bottom: 1.5rem;
   flex-wrap: wrap;
+}
+
+/* ---- Role Switcher in Sidebar ---- */
+.role-switcher {
+  padding: 0 1.25rem 1rem;
+}
+
+.role-switch-btn {
+  padding: 0.4rem 0.75rem;
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-muted);
+  font-family: var(--font-main);
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.role-switch-btn:hover {
+  border-color: var(--glass-border-highlight);
+  color: var(--text-primary);
+}
+
+.role-switch-btn.active {
+  background: var(--role-bg-subtle);
+  border-color: var(--role-border);
+  color: var(--role-accent-light);
 }

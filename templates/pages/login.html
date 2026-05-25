@@ -2,16 +2,146 @@
 {% block extra_css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}">{% endblock %}
 {% block content %}
 <div class="auth-page">
-  <div class="glass-card auth-card">
-    <h1>Welcome back</h1>
-    <p class="subtitle">Log in to your TalentStage account</p>
-    <form class="auth-form">
-      <div class="form-group"><label>Email</label><input type="email" required placeholder="you@example.com"></div>
-      <div class="form-group"><label>Password</label><input type="password" required placeholder="••••••••"></div>
-      <button type="submit" class="btn btn-primary" style="width:100%">Log In</button>
-    </form>
-    <p class="auth-footer">Don't have an account? <a href="/signup">Sign up</a></p>
+  <div class="auth-card-wrapper" id="loginCard">
+    <!-- Role Tab Switcher -->
+    <div class="auth-role-tabs">
+      <button class="auth-role-tab active" data-login-role="freelancer">
+        <span class="auth-role-tab-icon">💼</span>
+        <span>Freelancer</span>
+      </button>
+      <button class="auth-role-tab" data-login-role="client">
+        <span class="auth-role-tab-icon">🏢</span>
+        <span>Client</span>
+      </button>
+    </div>
+
+    <div class="glass-card auth-card auth-card--freelancer">
+      <!-- Decorative glow orb -->
+      <div class="auth-glow-orb"></div>
+
+      <!-- Role icon -->
+      <div class="auth-role-hero" id="loginHeroIcon">
+        <span class="auth-hero-emoji">🎨</span>
+      </div>
+
+      <h1 id="loginHeading">Welcome back, Creator</h1>
+      <p class="subtitle" id="loginSubtitle">Log in to showcase your talent and land your next gig</p>
+
+      <form class="auth-form" id="loginForm">
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" required placeholder="you@example.com" id="loginEmail">
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" required placeholder="••••••••" id="loginPassword">
+        </div>
+        <button type="submit" class="btn btn-primary auth-submit-btn" id="loginSubmitBtn">
+          <span class="auth-btn-text">Log In as Freelancer</span>
+          <span class="auth-btn-arrow">→</span>
+        </button>
+      </form>
+
+      <!-- Trust indicators -->
+      <div class="auth-trust" id="loginTrust">
+        <div class="auth-trust-item">
+          <span>🛡️</span>
+          <span>Secure login</span>
+        </div>
+        <div class="auth-trust-item">
+          <span>⚡</span>
+          <span>12,400+ freelancers</span>
+        </div>
+      </div>
+
+      <p class="auth-footer">Don't have an account? <a href="/signup">Sign up</a></p>
+    </div>
   </div>
 </div>
+
+<script>
+(function() {
+  const card = document.querySelector('.auth-card');
+  const wrapper = document.getElementById('loginCard');
+  const heading = document.getElementById('loginHeading');
+  const subtitle = document.getElementById('loginSubtitle');
+  const heroIcon = document.getElementById('loginHeroIcon');
+  const submitBtn = document.getElementById('loginSubmitBtn');
+  const trust = document.getElementById('loginTrust');
+  const tabs = document.querySelectorAll('[data-login-role]');
+
+  const themes = {
+    freelancer: {
+      cardClass: 'auth-card--freelancer',
+      heading: 'Welcome back, Creator',
+      subtitle: 'Log in to showcase your talent and land your next gig',
+      heroEmoji: '🎨',
+      btnText: 'Log In as Freelancer',
+      trust: [
+        { icon: '🛡️', text: 'Secure login' },
+        { icon: '⚡', text: '12,400+ freelancers' }
+      ]
+    },
+    client: {
+      cardClass: 'auth-card--client',
+      heading: 'Welcome back, Hiring Manager',
+      subtitle: 'Log in to find top talent and manage your projects',
+      heroEmoji: '📊',
+      btnText: 'Log In as Client',
+      trust: [
+        { icon: '🛡️', text: 'Secure login' },
+        { icon: '🌍', text: '3,200+ projects posted' }
+      ]
+    }
+  };
+
+  let activeRole = localStorage.getItem('talentstage_role') || 'freelancer';
+  // Normalize: if "both", default to freelancer for login
+  if (activeRole === 'both') activeRole = 'freelancer';
+
+  function applyTheme(role) {
+    const theme = themes[role];
+    if (!theme) return;
+
+    // Update card class
+    card.classList.remove('auth-card--freelancer', 'auth-card--client');
+    card.classList.add(theme.cardClass);
+
+    // Update body role class for CSS vars
+    document.body.classList.remove('role-freelancer', 'role-client', 'role-both');
+    document.body.classList.add('role-' + role);
+
+    // Animate content change
+    card.classList.add('auth-theme-switching');
+    setTimeout(() => {
+      heading.textContent = theme.heading;
+      subtitle.textContent = theme.subtitle;
+      heroIcon.innerHTML = `<span class="auth-hero-emoji">${theme.heroEmoji}</span>`;
+      submitBtn.querySelector('.auth-btn-text').textContent = theme.btnText;
+      trust.innerHTML = theme.trust.map(t =>
+        `<div class="auth-trust-item"><span>${t.icon}</span><span>${t.text}</span></div>`
+      ).join('');
+      card.classList.remove('auth-theme-switching');
+    }, 200);
+
+    // Update tabs
+    tabs.forEach(t => t.classList.toggle('active', t.dataset.loginRole === role));
+
+    // Persist
+    localStorage.setItem('talentstage_role', role);
+    activeRole = role;
+  }
+
+  // Initialize
+  applyTheme(activeRole);
+
+  // Tab clicks
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      const role = tab.dataset.loginRole;
+      if (role !== activeRole) applyTheme(role);
+    });
+  });
+})();
+</script>
 {% endblock %}
-{% block extra_js %}<script src="{{ url_for('static', filename='js/auth.js') }}"></script>{% endblock %}

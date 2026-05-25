@@ -1,3 +1,5 @@
+/* ===== Auth Pages — Role-Themed Login & Signup ===== */
+
 .auth-page {
   min-height: calc(100vh - var(--navbar-height));
   display: flex;
@@ -6,14 +8,227 @@
   padding: 2rem;
 }
 
-.auth-card {
-  width: min(440px, 100%);
-  padding: 2.5rem;
+/* ---- Card Wrapper ---- */
+.auth-card-wrapper {
+  width: min(480px, 100%);
 }
 
-.auth-card h1 { text-align: center; margin-bottom: 0.5rem; }
-.auth-card .subtitle { text-align: center; color: var(--text-muted); margin-bottom: 2rem; }
+/* ---- Role Tab Switcher ---- */
+.auth-role-tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  padding: 0.35rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  backdrop-filter: blur(12px);
+}
 
+.auth-role-tab {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.85rem 1rem;
+  border: none;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--text-muted);
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+
+.auth-role-tab-icon {
+  font-size: 1.1rem;
+  transition: transform 0.3s ease;
+}
+
+.auth-role-tab:hover {
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.auth-role-tab.active {
+  color: var(--text-primary);
+  background: var(--role-bg-subtle);
+  box-shadow: 0 0 20px var(--role-bg-subtle), inset 0 0 0 1px var(--role-border);
+}
+
+.auth-role-tab.active .auth-role-tab-icon {
+  transform: scale(1.15);
+}
+
+/* ---- Auth Card ---- */
+.auth-card {
+  width: 100%;
+  padding: 2.5rem;
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.4s ease, box-shadow 0.4s ease;
+}
+
+.auth-card h1 {
+  text-align: center;
+  margin-bottom: 0.5rem;
+  font-size: 1.65rem;
+  transition: color 0.3s ease;
+}
+
+.auth-card .subtitle {
+  text-align: center;
+  color: var(--text-muted);
+  margin-bottom: 2rem;
+  font-size: 0.92rem;
+  line-height: 1.5;
+}
+
+/* ---- Decorative Glow Orb ---- */
+.auth-glow-orb {
+  position: absolute;
+  top: -60px;
+  right: -60px;
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  background: var(--role-accent);
+  opacity: 0.06;
+  filter: blur(50px);
+  transition: background 0.5s ease, opacity 0.5s ease;
+  pointer-events: none;
+}
+
+/* ---- Role Hero Icon ---- */
+.auth-role-hero {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.25rem;
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: var(--role-bg-subtle);
+  border: 2px solid var(--role-border);
+  transition: all 0.4s ease;
+}
+
+.auth-hero-emoji {
+  font-size: 2rem;
+  line-height: 1;
+  display: block;
+  animation: authIconPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes authIconPop {
+  0% { transform: scale(0.5); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* ---- Freelancer Theme ---- */
+.auth-card--freelancer {
+  border-color: rgba(59, 130, 246, 0.2);
+  box-shadow: 0 0 40px rgba(59, 130, 246, 0.08), 0 10px 30px -10px rgba(0, 0, 0, 0.4);
+}
+
+.auth-card--freelancer h1 {
+  background: linear-gradient(135deg, #F8FAFC, #60A5FA);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.auth-card--freelancer .auth-submit-btn {
+  background: linear-gradient(135deg, #3B82F6, #2563EB);
+  box-shadow: 0 4px 20px rgba(59, 130, 246, 0.35);
+}
+
+.auth-card--freelancer .auth-submit-btn:hover {
+  box-shadow: 0 6px 30px rgba(59, 130, 246, 0.5);
+  transform: translateY(-2px);
+}
+
+/* ---- Client Theme ---- */
+.auth-card--client {
+  border-color: rgba(6, 182, 212, 0.2);
+  box-shadow: 0 0 40px rgba(6, 182, 212, 0.08), 0 10px 30px -10px rgba(0, 0, 0, 0.4);
+}
+
+.auth-card--client h1 {
+  background: linear-gradient(135deg, #F8FAFC, #22D3EE);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.auth-card--client .auth-submit-btn {
+  background: linear-gradient(135deg, #06B6D4, #0891B2);
+  box-shadow: 0 4px 20px rgba(6, 182, 212, 0.35);
+}
+
+.auth-card--client .auth-submit-btn:hover {
+  box-shadow: 0 6px 30px rgba(6, 182, 212, 0.5);
+  transform: translateY(-2px);
+}
+
+/* ---- Submit Button ---- */
+.auth-submit-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.9rem 1.5rem;
+  border: none;
+  border-radius: var(--radius-md);
+  color: #fff;
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.auth-btn-arrow {
+  transition: transform 0.3s ease;
+  font-size: 1.1rem;
+}
+
+.auth-submit-btn:hover .auth-btn-arrow {
+  transform: translateX(4px);
+}
+
+/* ---- Theme Switching Animation ---- */
+.auth-theme-switching {
+  opacity: 0.6;
+  transform: scale(0.98);
+}
+
+/* ---- Trust Indicators ---- */
+.auth-trust {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--glass-border);
+}
+
+.auth-trust-item {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.8rem;
+  color: var(--text-dim);
+}
+
+/* ---- Legacy styles (signup compatibility) ---- */
 .role-picker {
   display: grid;
   grid-template-columns: repeat(3, 1fr);

@@ -17,15 +17,34 @@
 <script>
 function renderProjectsPage() {
   const state = TalentStageStore.get();
-  document.getElementById("open-projects").innerHTML = state.projects.map(p => `
-    <div class="glass-card project-card">
-      <h3>${p.title}</h3>
-      <p class="text-sm text-muted">${p.client}</p>
-      <p class="budget">${TalentStageStore.money(p.budgetMin)}-${TalentStageStore.money(p.budgetMax)} · ${p.type}</p>
-      <p class="deadline">Due ${p.deadline} · ${p.proposals + state.proposals.filter(item => item.projectId === p.id).length} proposals</p>
-      <div class="mt-2">${p.skills.map(s => `<span class="tag">${s}</span>`).join("")}</div>
-      <a href="/proposals/submit/${p.id}" class="btn btn-primary btn-sm mt-2">Submit Proposal</a>
-    </div>`).join("");
+  document.getElementById("open-projects").innerHTML = state.projects.map(p => {
+    const clientData = MOCK_DATA.clients[p.client] || { rating: 0, totalSpent: "$0", paymentVerified: false, location: "Unknown" };
+    return `
+    <div class="glass-card project-card reveal" style="display:flex; flex-direction:column;">
+      <h3 style="margin-bottom:0.25rem;">${p.title}</h3>
+      <p class="text-sm text-muted" style="margin-bottom:0.75rem;">${p.client}</p>
+      
+      <div style="display:flex; flex-wrap:wrap; gap:0.75rem; margin-bottom:1rem; font-size:0.8rem;">
+        <span style="color:var(--text-primary); font-weight:600;">⭐ ${clientData.rating}</span>
+        <span style="color:${clientData.paymentVerified ? 'var(--role-accent-light)' : 'var(--text-muted)'};">
+          ${clientData.paymentVerified ? '✅ Payment Verified' : '❌ Payment Unverified'}
+        </span>
+        <span style="color:var(--text-muted);">💰 ${clientData.totalSpent} spent</span>
+        <span style="color:var(--text-muted);">📍 ${clientData.location}</span>
+      </div>
+
+      <p class="budget" style="font-size:1.1rem; color:var(--text-primary); font-weight:700;">${TalentStageStore.money(p.budgetMin)}-${TalentStageStore.money(p.budgetMax)} <span style="font-weight:400; font-size:0.9rem; color:var(--text-muted);">· ${p.type}</span></p>
+      <p class="deadline text-muted" style="font-size:0.85rem; margin:0.5rem 0 1rem;">Due ${p.deadline} · ${p.proposals + state.proposals.filter(item => item.projectId === p.id).length} proposals</p>
+      
+      <div style="display:flex; flex-wrap:wrap; gap:0.4rem; margin-bottom:1.5rem;">
+        ${p.skills.map(s => `<span class="tag" style="padding:0.2rem 0.5rem; font-size:0.75rem;">${s}</span>`).join("")}
+      </div>
+      
+      <div class="mt-auto">
+        <a href="/proposals/submit/${p.id}" class="btn btn-primary" style="width:100%; justify-content:center;">Submit Proposal</a>
+      </div>
+    </div>`;
+  }).join("");
   document.getElementById("my-proposals").innerHTML = state.proposals.length
     ? state.proposals.slice().reverse().map(p => `<div class="glass-card mb-2"><strong>${p.projectTitle}</strong><p class="text-sm text-muted">${TalentStageStore.money(p.bid)} · ${p.timeline} · ${p.status}</p><p>${p.message}</p></div>`).join("")
     : `<div class="glass-card"><p>No proposals submitted yet.</p></div>`;

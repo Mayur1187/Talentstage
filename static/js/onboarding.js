@@ -100,6 +100,11 @@
           state.currentUser.role = selectedRole;
           TalentStageStore.save(state);
         }
+        // Set auth state
+        localStorage.setItem("talentstage_logged_in", "true");
+        const emailInput = wizard.querySelector('#signupEmail');
+        if (emailInput) localStorage.setItem("talentstage_user_email", emailInput.value.trim());
+        
         showToast('Account created! Let\'s verify your identity.');
         setTimeout(() => { window.location.href = '/verify'; }, 800);
       });

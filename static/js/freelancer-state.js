@@ -21,6 +21,22 @@ function buildInitialTalentStageState() {
       badges: ["Verified React Developer"],
       verifyStatus: "none",
       verifyMethod: null,
+      jobSuccess: 100,
+      totalEarned: "$0",
+      completedJobs: 0,
+      hoursWorked: 0,
+      location: "Your City, Country (Timezone)",
+      responseTime: "< 24 hrs",
+      languages: ["English (Fluent)"],
+      // Client-specific metrics
+      clientRating: 0.0,
+      clientReviews: 0,
+      clientTotalSpent: "$0",
+      clientJobsPosted: 0,
+      clientHireRate: "0%",
+      clientMemberSince: new Date().getFullYear().toString(),
+      clientPaymentVerified: false,
+      clientIndustry: "Not specified"
     },
     portfolio: [
       { id: 1, title: "FinTech Dashboard", desc: "Redesigned analytics dashboard - 34% faster task completion.", tools: ["Figma", "React"], category: "Design", link: "https://example.com/fintech", image: "" },
